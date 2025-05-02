@@ -3,8 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>技术文档中心 | 产品名称</title>
+    <title>NTの文档小站</title>
     <style>
+        :root {
+            --primary-blue: #2c3e50;
+            --accent-blue: #3498db;
+            --light-bg: #f8f9fa;
+            --text-dark: #34495e;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -19,7 +26,7 @@
 
         /* 导航栏 */
         .navbar {
-            background: #2c3e50;
+            background: var(--primary-blue);
             padding: 1rem 2rem;
             position: sticky;
             top: 0;
@@ -58,7 +65,7 @@
         /* 侧边栏 */
         .sidebar {
             width: 280px;
-            background: #f8f9fa;
+            background: var(--light-bg);
             position: fixed;
             left: 0;
             top: 70px;
@@ -71,7 +78,7 @@
 
         .sidebar-header {
             font-weight: bold;
-            color: #2c3e50;
+            color: var(--primary-blue);
             margin-bottom: 1rem;
             font-size: 1.1rem;
         }
@@ -85,7 +92,7 @@
         }
 
         .sidebar-nav a {
-            color: #34495e;
+            color: var(--text-dark);
             text-decoration: none;
             padding: 0.5rem;
             display: block;
@@ -115,7 +122,7 @@
         .search-input {
             width: 60%;
             padding: 1rem;
-            border: 2px solid #3498db;
+            border: 2px solid var(--accent-blue);
             border-radius: 25px;
             font-size: 1.1rem;
             outline: none;
@@ -130,7 +137,7 @@
         }
 
         .category-card {
-            background: #f8f9fa;
+            background: var(--light-bg);
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -142,7 +149,7 @@
         }
 
         .category-card h3 {
-            color: #3498db;
+            color: var(--accent-blue);
             margin-bottom: 1rem;
         }
 
@@ -150,9 +157,9 @@
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(-100%);
-                top: 0;
+                top: 70px;
                 z-index: 1000;
-                background: white;
+                background: var(--light-bg);
                 box-shadow: 2px 0 8px rgba(0,0,0,0.1);
             }
 
@@ -183,6 +190,12 @@
             }
         }
 
+        @media (hover: none) {
+            .category-card:hover {
+                transform: none;
+            }
+        }
+
         /* 汉堡菜单 */
         .menu-toggle {
             display: none;
@@ -193,93 +206,89 @@
             cursor: pointer;
             padding: 0.5rem;
         }
+
+        /* 辅助样式 */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <button class="menu-toggle">☰</button>
-            <a href="#" class="logo">产品文档</a>
+            <button 
+                class="menu-toggle" 
+                aria-label="切换导航菜单"
+                aria-expanded="false"
+            >
+                ☰
+            </button>
+            <a href="#" class="logo">NTの文档</a>
             <div class="nav-links">
-                <a href="#getting-started">入门指南</a>
-                <a href="#api">API文档</a>
-                <a href="#tutorials">教程</a>
+                <a href="#re-release">NTの提升FPS材质包</a>
+                <a href="#docs">随写文档</a>
+                <a href="#server">牢郎的ess服务器</a>
                 <a href="#faq">常见问题</a>
             </div>
         </div>
     </nav>
 
-<aside class="sidebar">
-        <div class="sidebar-header">文档目录</div>
-        <nav>
+    <aside class="sidebar">
+        <div class="sidebar-header">目录</div>
+        <nav aria-label="文档目录">
             <ul class="sidebar-nav">
-                <li><a href="#installation">安装指南</a></li>
-                <li><a href="#configuration">配置说明</a></li>
-                <li><a href="#api-reference">API 参考</a></li>
-                <li><a href="#troubleshooting">故障排除</a></li>
-                <li><a href="#examples">代码示例</a></li>
-                <li><a href="#best-practices">最佳实践</a></li>
                 <li><a href="#version-history">版本历史</a></li>
             </ul>
         </nav>
     </aside>
 
-<div class="container">
+    <main class="container">
         <div class="search-box">
+            <label for="searchInput" class="visually-hidden">文档搜索</label>
             <input 
                 type="text" 
                 class="search-input" 
                 placeholder="搜索文档..."
                 id="searchInput"
+                aria-describedby="searchHelp"
             >
+            <div id="searchHelp" class="visually-hidden">按回车键执行搜索</div>
         </div>
+    </main>
 
-        <div class="doc-categories">
-            <div class="category-card">
-                <h3>🚀 快速入门</h3>
-                <p>从零开始学习产品的基本使用方法</p>
-                <ul>
-                    <li><a href="#">安装指南</a></li>
-                    <li><a href="#">基础配置</a></li>
-                    <li><a href="#">第一个项目</a></li>
-                </ul>
-            </div>
-
-            <div class="category-card">
-                <h3>📚 核心概念</h3>
-                <p>深入了解产品的工作原理</p>
-                <ul>
-                    <li><a href="#">架构设计</a></li>
-                    <li><a href="#">核心功能</a></li>
-                    <li><a href="#">最佳实践</a></li>
-                </ul>
-            </div>
-
-            <div class="category-card">
-                <h3>⚙️ API参考</h3>
-                <p>完整的接口文档和示例</p>
-                <ul>
-                    <li><a href="#">REST API</a></li>
-                    <li><a href="#">SDK文档</a></li>
-                    <li><a href="#">错误代码</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-<script>
-        // 侧边栏交互
+    <script>
+        // DOM元素缓存
         const menuToggle = document.querySelector('.menu-toggle');
         const sidebar = document.querySelector('.sidebar');
 
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
+        // 事件委托处理点击
+        document.body.addEventListener('click', (e) => {
+            if (e.target.closest('.menu-toggle')) {
+                const isExpanded = sidebar.classList.toggle('active');
+                menuToggle.setAttribute('aria-expanded', isExpanded);
+            } else if (!sidebar.contains(e.target) && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            }
         });
 
-        document.addEventListener('click', (e) => {
-            if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-                sidebar.classList.remove('active');
-            }
+        // 防抖的resize处理
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (window.innerWidth > 992) {
+                    sidebar.classList.remove('active');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                }
+            }, 250);
         });
 
         // 搜索功能
@@ -292,14 +301,6 @@
                 }
             }
         });
-
-        // 自动关闭移动端侧边栏
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 992) {
-                sidebar.classList.remove('active');
-            }
-        });
     </script>
 </body>
 </html>
-
