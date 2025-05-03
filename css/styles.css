@@ -414,3 +414,53 @@ pre::after {
     border-radius: 4px;
     animation: pulse 1.5s ease-in-out infinite;
 }
+/* styles.css 新增/修改部分 */
+/* 壁纸信息层 */
+.wallpaper-overlay {
+    position: relative;
+    z-index: 1;
+    min-height: 80vh;
+    padding: 2rem;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    transition: opacity 0.3s ease;
+}
+
+/* Markdown容器 */
+.markdown-container {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90%, 800px);
+    max-height: 80vh;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    padding: 2rem;
+    overflow-y: auto;
+    animation: slideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+    opacity: 0.8;
+}
