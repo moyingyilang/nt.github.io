@@ -8,7 +8,7 @@
         :root {
             --primary-blue: #2c3e50;
             --accent-blue: #3498db;
-            --light-bg: #f8f9fa;
+            --light-bg: rgba(248, 249, 250, 0.85);
             --text-dark: #34495e;
         }
 
@@ -38,7 +38,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.85);
             z-index: -1;
             pointer-events: none;
         }
@@ -160,17 +160,27 @@
         .container {
             margin-left: 280px;
             max-width: calc(1200px - 280px);
-            padding: 2rem;
+            padding: 2rem 3rem;
             margin-top: 2rem;
+            text-align: left;
         }
 
         /* 文档分类 */
         .doc-categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
+            display: none !important;
         }
+        
+        .content-header h1 {
+        	font-size: 2.2rem;
+    		color: var(--primary-blue);
+    		margin-bottom: 1rem;
+		}
+
+		.content-header .description {
+    		font-size: 1.1rem;
+    		color: #666;
+    		line-height: 1.8;
+		}
 
         .category-card {
             background: var(--light-bg);
@@ -195,7 +205,9 @@
                 transform: translateX(-100%);
                 top: 70px;
                 z-index: 1000;
-                background: var(--light-bg);
+                width: 280px;
+                background: rgba(248, 249, 250, 0.96);
+                backdrop-filter: blur(2px);
                 box-shadow: 2px 0 8px rgba(0,0,0,0.1);
             }
 
@@ -330,37 +342,10 @@
     </aside>
     
     <main class="container">
-        <div class="doc-categories">
-            <div class="category-card">
-                <h3>🚀 快速入门</h3>
-                <p>从零开始学习产品的基本使用方法</p>
-                <ul>
-                    <li><a href="#">安装指南</a></li>
-                    <li><a href="#">基础配置</a></li>
-                    <li><a href="#">第一个项目</a></li>
-                </ul>
-            </div>
-
-            <div class="category-card">
-                <h3>📚 核心概念</h3>
-                <p>深入了解产品的工作原理</p>
-                <ul>
-                    <li><a href="#">架构设计</a></li>
-                    <li><a href="#">核心功能</a></li>
-                    <li><a href="#">最佳实践</a></li>
-                </ul>
-            </div>
-
-            <div class="category-card">
-                <h3>⚙️ API参考</h3>
-                <p>完整的接口文档和示例</p>
-                <ul>
-                    <li><a href="#">REST API</a></li>
-                    <li><a href="#">SDK文档</a></li>
-                    <li><a href="#">错误代码</a></li>
-                </ul>
-            </div>
-        </div>
+    <div class="content-header">
+        <h1>欢迎来到文档中心</h1>
+        <p class="description">这里是产品技术文档的核心知识库</p>
+    </div>
     </main>
     
     <script>
