@@ -17,15 +17,19 @@
     <!-- 保留原有导航结构 -->
     <nav class="navbar">
         <div class="navbar-content">
-            <button 
-                class="menu-toggle" 
-                aria-label="切换导航菜单"
-                aria-expanded="false"
-                aria-controls="sidebar">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+         <!-- index.html 调整部分 -->
+<button 
+    class="menu-toggle" 
+    aria-label="切换导航菜单"
+    aria-expanded="false"
+    aria-controls="sidebar"
+    id="menuToggle">  <!-- 增加明确ID -->
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<aside class="sidebar" id="sidebar" aria-modal="true" aria-hidden="true">  <!-- 增加ARIA属性 -->
             <a href="#" class="logo">NTの文档</a>
             <div class="nav-links">
                 <a href="#nt-fps">提升FPS材质包</a>

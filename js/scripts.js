@@ -197,50 +197,127 @@ class ArticleLoader {
 // ======== 修复版侧边栏交互 ========
 class SidebarManager {
     constructor() {
-        this.sidebar = document.querySelector('.sidebar');
-        this.menuToggle = document.querySelector('.menu-toggle');
+        this.sidebar = document.getElementById('sidebar');
+        this.menuToggle = document.getElementById('menuToggle');
         this.submenus = document.querySelectorAll('.has-submenu');
         this.#init();
     }
 
     #init() {
+        // 修复语法错误并增强点击外部关闭逻辑
+        document.addEventListener('click', (e) => {
+            const isInside = this.sidebar.contains(e.target) || e.target === this.menuToggle;
+            if (!isInside && this.isMenuOpen()) {
+                this.closeMenu();
+            }
+        });
+
+        // 添加键盘事件支持
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isMenuOpen()) {
+                this.closeMenu();
+            }
+        });
+
         // 绑定主菜单切换
-        this.menuToggle.addEventListener('click', () => this.toggleMenu());
+        this.menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleMenu();
+        });
         
-        // 绑定子菜单切换
+        // 优化子菜单交互
         this.submenus.forEach(item => {
             const submenu = item.querySelector('.submenu');
             const link = item.querySelector('a');
             
             link.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 this.toggleSubmenu(item, submenu);
             });
         });
 
-        // 绑定外部点击关闭
-        document.addEventListener('click', (e) => {
-            if (!this.sidebar.contains(e.target) {
-                this.closeMenu();
-            }
-        });
+        // 添加触摸滑动关闭支持（移动端）
+        this.#enableSwipeToClose();
+        this.#handleResponsive();
+    }
+
+    // 新增方法：判断菜单是否打开
+    isMenuOpen() {
+        return this.sidebar.classList.contains('active');
     }
 
     toggleMenu() {
         this.sidebar.classList.toggle('active');
         this.menuToggle.classList.toggle('active');
-        this.menuToggle.setAttribute('aria-expanded', 
-            this.sidebar.classList.contains('active'));
+        this.menuToggle.setAttribute('aria-expanded', this.isMenuOpen());
+        
+        const wasOpen = this.isMenuOpen();
+        this.sidebar.classList.toggle('active');
+        this.menuToggle.classList.toggle('active');
+        this.menuToggle.setAttribute('aria-expanded', !wasOpen);
+        this.sidebar.setAttribute('aria-hidden', wasOpen);
+        document.body.classList.toggle('menu-open', !wasOpen);
+        
+        // 添加过渡动画
+        if (this.isMenuOpen()) {
+            this.sidebar.style.transform = 'translateX(0)';
+        } else {
+            this.sidebar.style.transform = 'translateX(-100%)';
+        }
     }
 
     closeMenu() {
         this.sidebar.classList.remove('active');
         this.menuToggle.classList.remove('active');
         this.menuToggle.setAttribute('aria-expanded', 'false');
+        this.sidebar.style.transform = 'translateX(-100%)';
     }
 
+    // 新增方法：触摸滑动关闭
+    #enableSwipeToClose() {
+        let touchStartX = 0;
+        const SWIPE_THRESHOLD = 50;
+
+        this.sidebar.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+
+        this.sidebar.addEventListener('touchmove', (e) => {
+            if (!this.isMenuOpen()) return;
+            
+            const currentX = e.touches[0].clientX;
+            const deltaX = currentX - touchStartX;
+            
+            if (deltaX < -SWIPE_THRESHOLD) {
+                this.closeMenu();
+            }
+        }, { passive: true });
+    }
+
+    // 优化后的响应式处理
+    #handleResponsive() {
+        const handleResize = () => {
+            if (window.innerWidth > 992) {
+                this.closeMenu();
+                this.submenus.forEach(item => {
+                    item.classList.remove('open');
+                    item.querySelector('.submenu').style.maxHeight = '';
+                });
+                this.sidebar.style.transform = '';
+            } else {
+                this.sidebar.style.transform = this.isMenuOpen() 
+                    ? 'translateX(0)' 
+                    : 'translateX(-100%)';
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // 初始化执行
+    }
+
+    // 保持原有子菜单切换逻辑
     toggleSubmenu(parentItem, submenu) {
-        // 关闭其他子菜单
         this.submenus.forEach(otherItem => {
             if (otherItem !== parentItem) {
                 otherItem.classList.remove('open');
@@ -248,96 +325,9 @@ class SidebarManager {
             }
         });
 
-        // 切换当前子菜单
         const isOpening = !parentItem.classList.contains('open');
         parentItem.classList.toggle('open');
         submenu.style.maxHeight = isOpening ? `${submenu.scrollHeight}px` : '0';
-    }
-
-    // 移动端适配
-    #handleResponsive() {
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 992) {
-                this.sidebar.classList.remove('active');
-                this.submenus.forEach(item => {
-                    item.classList.remove('open');
-                    item.querySelector('.submenu').style.maxHeight = '';
-                });
-            }
-        });
-    }
-}
-
-class SidebarManager {
-    constructor() {
-        this.sidebar = document.querySelector('.sidebar');
-        this.menuToggle = document.querySelector('.menu-toggle');
-        this.submenus = document.querySelectorAll('.has-submenu');
-        this.#init();
-    }
-
-    #init() {
-        // 绑定主菜单切换
-        this.menuToggle.addEventListener('click', () => this.toggleMenu());
-        
-        // 绑定子菜单切换
-        this.submenus.forEach(item => {
-            const submenu = item.querySelector('.submenu');
-            const link = item.querySelector('a');
-            
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.toggleSubmenu(item, submenu);
-            });
-        });
-
-        // 绑定外部点击关闭
-        document.addEventListener('click', (e) => {
-            if (!this.sidebar.contains(e.target) {
-                this.closeMenu();
-            }
-        });
-    }
-
-    toggleMenu() {
-        this.sidebar.classList.toggle('active');
-        this.menuToggle.classList.toggle('active');
-        this.menuToggle.setAttribute('aria-expanded', 
-            this.sidebar.classList.contains('active'));
-    }
-
-    closeMenu() {
-        this.sidebar.classList.remove('active');
-        this.menuToggle.classList.remove('active');
-        this.menuToggle.setAttribute('aria-expanded', 'false');
-    }
-
-    toggleSubmenu(parentItem, submenu) {
-        // 关闭其他子菜单
-        this.submenus.forEach(otherItem => {
-            if (otherItem !== parentItem) {
-                otherItem.classList.remove('open');
-                otherItem.querySelector('.submenu').style.maxHeight = '0';
-            }
-        });
-
-        // 切换当前子菜单
-        const isOpening = !parentItem.classList.contains('open');
-        parentItem.classList.toggle('open');
-        submenu.style.maxHeight = isOpening ? `${submenu.scrollHeight}px` : '0';
-    }
-
-    // 移动端适配
-    #handleResponsive() {
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 992) {
-                this.sidebar.classList.remove('active');
-                this.submenus.forEach(item => {
-                    item.classList.remove('open');
-                    item.querySelector('.submenu').style.maxHeight = '';
-                });
-            }
-        });
     }
 }
 // ======== 初始化 ========
