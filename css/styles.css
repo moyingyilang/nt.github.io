@@ -164,13 +164,28 @@ body::after {
     padding-left: 1rem;
 }
 
+/* 确保子菜单动画正常工作 */
 .submenu {
     max-height: 0;
     overflow: hidden;
-    padding-left: 1rem;
-    transition: max-height var(--transition-speed) var(--easing);
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* 修复移动端滑动问题 */
+@media (max-width: 992px) {
+    .sidebar {
+        transition: transform 0.3s ease;
+        transform: translateX(-100%);
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
+}
+
+/* 子菜单视觉反馈 */
+.has-submenu.open > a {
+    color: var(--accent-blue) !important;
+}
 .submenu.active {
     max-height: 500px;
 }

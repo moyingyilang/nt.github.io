@@ -194,57 +194,158 @@ class ArticleLoader {
     }
 }
 
-// ======== 侧边栏管理类 ========
+// ======== 修复版侧边栏交互 ========
 class SidebarManager {
     constructor() {
         this.sidebar = document.querySelector('.sidebar');
-        this.toggleBtn = document.querySelector('.menu-toggle');
+        this.menuToggle = document.querySelector('.menu-toggle');
+        this.submenus = document.querySelectorAll('.has-submenu');
         this.#init();
     }
 
     #init() {
-        this.#bindEvents();
-        this.#checkViewport();
+        // 绑定主菜单切换
+        this.menuToggle.addEventListener('click', () => this.toggleMenu());
+        
+        // 绑定子菜单切换
+        this.submenus.forEach(item => {
+            const submenu = item.querySelector('.submenu');
+            const link = item.querySelector('a');
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggleSubmenu(item, submenu);
+            });
+        });
+
+        // 绑定外部点击关闭
+        document.addEventListener('click', (e) => {
+            if (!this.sidebar.contains(e.target) {
+                this.closeMenu();
+            }
+        });
     }
 
-    #bindEvents() {
-        document.addEventListener('click', e => this.#handleClick(e));
-        window.addEventListener('resize', () => this.#checkViewport());
-    }
-
-    #handleClick(e) {
-        if (e.target.closest('.menu-toggle')) {
-            this.toggle();
-        } else if (this.sidebar.classList.contains('active')) {
-            this.close();
-        }
-    }
-
-    #checkViewport() {
-        if (window.innerWidth > 992) this.close();
-    }
-
-    toggle() {
+    toggleMenu() {
         this.sidebar.classList.toggle('active');
-        this.toggleBtn.classList.toggle('active');
-        this.toggleBtn.setAttribute('aria-expanded', 
+        this.menuToggle.classList.toggle('active');
+        this.menuToggle.setAttribute('aria-expanded', 
             this.sidebar.classList.contains('active'));
     }
 
-    close() {
+    closeMenu() {
         this.sidebar.classList.remove('active');
-        this.toggleBtn.classList.remove('active');
-        this.toggleBtn.setAttribute('aria-expanded', 'false');
+        this.menuToggle.classList.remove('active');
+        this.menuToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    toggleSubmenu(parentItem, submenu) {
+        // 关闭其他子菜单
+        this.submenus.forEach(otherItem => {
+            if (otherItem !== parentItem) {
+                otherItem.classList.remove('open');
+                otherItem.querySelector('.submenu').style.maxHeight = '0';
+            }
+        });
+
+        // 切换当前子菜单
+        const isOpening = !parentItem.classList.contains('open');
+        parentItem.classList.toggle('open');
+        submenu.style.maxHeight = isOpening ? `${submenu.scrollHeight}px` : '0';
+    }
+
+    // 移动端适配
+    #handleResponsive() {
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                this.sidebar.classList.remove('active');
+                this.submenus.forEach(item => {
+                    item.classList.remove('open');
+                    item.querySelector('.submenu').style.maxHeight = '';
+                });
+            }
+        });
     }
 }
 
+class SidebarManager {
+    constructor() {
+        this.sidebar = document.querySelector('.sidebar');
+        this.menuToggle = document.querySelector('.menu-toggle');
+        this.submenus = document.querySelectorAll('.has-submenu');
+        this.#init();
+    }
+
+    #init() {
+        // 绑定主菜单切换
+        this.menuToggle.addEventListener('click', () => this.toggleMenu());
+        
+        // 绑定子菜单切换
+        this.submenus.forEach(item => {
+            const submenu = item.querySelector('.submenu');
+            const link = item.querySelector('a');
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggleSubmenu(item, submenu);
+            });
+        });
+
+        // 绑定外部点击关闭
+        document.addEventListener('click', (e) => {
+            if (!this.sidebar.contains(e.target) {
+                this.closeMenu();
+            }
+        });
+    }
+
+    toggleMenu() {
+        this.sidebar.classList.toggle('active');
+        this.menuToggle.classList.toggle('active');
+        this.menuToggle.setAttribute('aria-expanded', 
+            this.sidebar.classList.contains('active'));
+    }
+
+    closeMenu() {
+        this.sidebar.classList.remove('active');
+        this.menuToggle.classList.remove('active');
+        this.menuToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    toggleSubmenu(parentItem, submenu) {
+        // 关闭其他子菜单
+        this.submenus.forEach(otherItem => {
+            if (otherItem !== parentItem) {
+                otherItem.classList.remove('open');
+                otherItem.querySelector('.submenu').style.maxHeight = '0';
+            }
+        });
+
+        // 切换当前子菜单
+        const isOpening = !parentItem.classList.contains('open');
+        parentItem.classList.toggle('open');
+        submenu.style.maxHeight = isOpening ? `${submenu.scrollHeight}px` : '0';
+    }
+
+    // 移动端适配
+    #handleResponsive() {
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                this.sidebar.classList.remove('active');
+                this.submenus.forEach(item => {
+                    item.classList.remove('open');
+                    item.querySelector('.submenu').style.maxHeight = '';
+                });
+            }
+        });
+    }
+}
 // ======== 初始化 ========
 document.addEventListener('DOMContentLoaded', () => {
-    // 核心模块
+    // 确保按顺序初始化
+    const sidebarManager = new SidebarManager();
+    const articleLoader = new ArticleLoader();
     new WallpaperManager().init();
-    new ArticleLoader();
-    new SidebarManager();
-
     // 保留原有搜索功能
     const searchModule = {
         init() {
