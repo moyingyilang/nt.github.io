@@ -76,6 +76,19 @@
             transition: transform 0.3s;
         }
 
+        /* 侧边栏搜索框 */
+        .sidebar-search {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-search input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--accent-blue);
+            border-radius: 25px;
+            font-size: 1rem;
+        }
+
         .sidebar-header {
             font-weight: bold;
             color: var(--primary-blue);
@@ -111,21 +124,6 @@
             max-width: calc(1200px - 280px);
             padding: 2rem;
             margin-top: 2rem;
-        }
-
-        /* 搜索框 */
-        .search-box {
-            text-align: center;
-            margin: 3rem 0;
-        }
-
-        .search-input {
-            width: 60%;
-            padding: 1rem;
-            border: 2px solid var(--accent-blue);
-            border-radius: 25px;
-            font-size: 1.1rem;
-            outline: none;
         }
 
         /* 文档分类 */
@@ -177,10 +175,6 @@
                 display: none;
             }
 
-            .search-input {
-                width: 90%;
-            }
-
             .doc-categories {
                 grid-template-columns: 1fr;
             }
@@ -196,17 +190,44 @@
             }
         }
 
-        /* 汉堡菜单 */
+        /* 汉堡菜单动画 */
         .menu-toggle {
             display: none;
             background: none;
             border: none;
-            color: white;
-            font-size: 1.5rem;
             cursor: pointer;
-            padding: 0.5rem;
+            width: 32px;
+            height: 32px;
+            position: relative;
         }
 
+        .menu-toggle span {
+            position: absolute;
+            height: 2px;
+            width: 24px;
+            background: white;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+        }
+
+        .menu-toggle span:nth-child(1) { top: 10px; }
+        .menu-toggle span:nth-child(2) { top: 16px; }
+        .menu-toggle span:nth-child(3) { top: 22px; }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateX(-50%) translateY(6px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-50%) scaleX(0);
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateX(-50%) translateY(-6px) rotate(-45deg);
+        }
         /* 辅助样式 */
         .visually-hidden {
             position: absolute;
@@ -228,7 +249,9 @@
                 aria-label="切换导航菜单"
                 aria-expanded="false"
             >
-                ☰
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
             <a href="#" class="logo">NTの文档</a>
             <div class="nav-links">
@@ -241,16 +264,7 @@
     </nav>
 
     <aside class="sidebar">
-        <div class="sidebar-header">目录</div>
-        <nav aria-label="文档目录">
-            <ul class="sidebar-nav">
-                <li><a href="#version-history">版本历史</a></li>
-            </ul>
-        </nav>
-    </aside>
-
-    <main class="container">
-        <div class="search-box">
+        <div class="sidebar-search">
             <label for="searchInput" class="visually-hidden">文档搜索</label>
             <input 
                 type="text" 
@@ -261,8 +275,13 @@
             >
             <div id="searchHelp" class="visually-hidden">按回车键执行搜索</div>
         </div>
-    </main>
-
+        <div class="sidebar-header">目录</div>
+        <nav aria-label="文档目录">
+            <ul class="sidebar-nav">
+                <li><a href="#version-history">版本历史</a></li>
+            </ul>
+        </nav>
+    </aside>   
     <script>
         // DOM元素缓存
         const menuToggle = document.querySelector('.menu-toggle');
@@ -271,10 +290,13 @@
         // 事件委托处理点击
         document.body.addEventListener('click', (e) => {
             if (e.target.closest('.menu-toggle')) {
-                const isExpanded = sidebar.classList.toggle('active');
-                menuToggle.setAttribute('aria-expanded', isExpanded);
+                const isActive = !sidebar.classList.contains('active');
+                sidebar.classList.toggle('active');
+                menuToggle.classList.toggle('active');
+                menuToggle.setAttribute('aria-expanded', isActive);
             } else if (!sidebar.contains(e.target) && sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
+                menuToggle.classList.remove('active');
                 menuToggle.setAttribute('aria-expanded', 'false');
             }
         });
@@ -286,6 +308,7 @@
             resizeTimer = setTimeout(() => {
                 if (window.innerWidth > 992) {
                     sidebar.classList.remove('active');
+                    menuToggle.classList.remove('active');
                     menuToggle.setAttribute('aria-expanded', 'false');
                 }
             }, 250);
