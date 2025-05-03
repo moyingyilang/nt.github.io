@@ -126,6 +126,8 @@
             border: 2px solid var(--accent-blue);
             border-radius: 25px;
             font-size: 1rem;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3)
         }
 
         .sidebar-header {
@@ -137,10 +139,6 @@
 
         .sidebar-nav {
             list-style: none;
-        }
-
-        .sidebar-nav li {
-            margin: 0.5rem 0;
         }
 
         .sidebar-nav a {
@@ -158,17 +156,15 @@
         }
         
         .submenu {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            padding-left: 1.5rem;
+            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .submenu.active {
             max-height: 500px;
         }
         .sidebar-nav li {
-            margin: 0.8rem 0;  /* 增加垂直间距 */
-            position: relative; /* 为动画效果做准备 */
+            margin: 0.8rem 0;
+            position: relative;
+            transition: transform 0.2s; /* 添加平滑过渡 */
         }
 
         .submenu li {
@@ -383,26 +379,26 @@
     <script>
         // ======== 壁纸管理模块 ========
         const deviceDetector = {
-            isMobile: () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
-                        || window.matchMedia("(max-width: 768px)").matches,
-            isRetina: () => window.devicePixelRatio >= 2
-        };
+        isMobile: () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                    || window.matchMedia("(max-width: 768px)").matches,
+        isRetina: () => window.devicePixelRatio >= 2
+    };
 
-        const wallpaperManager = {
-            cache: { lastUpdate: 0 },
+    const wallpaperManager = {
+        cache: { lastUpdate: 0 },
+        
+        getWallpaperUrl: function() {
+            const baseUrl = deviceDetector.isMobile() 
+                ? 'https://bing.img.run/m.php' 
+                : 'https://bing.img.run/uhd.php';
             
-            getWallpaperUrl: function() {
-                const baseUrl = deviceDetector.isMobile() 
-                    ? 'https://bing.img.run/m.php' 
-                    : 'https://bing.img.run/uhd.php';
-                
-                const params = new URLSearchParams({
-                    t: Date.now(),
-                    q: deviceDetector.isRetina() ? 100 : 85
-                });
-                
-                return `${baseUrl}?${params}`;
-            },
+            const params = new URLSearchParams({
+                t: Date.now(),
+                q: deviceDetector.isRetina() ? 100 : 85
+            });
+            
+            return `${baseUrl}?${params}`;
+        },
 
             preloadImage: url => new Promise((resolve, reject) => {
                 const img = new Image();
@@ -418,7 +414,7 @@
                     const url = this.getWallpaperUrl();
                     await this.preloadImage(url);
                     
-                    ument.body.style.backgroundImage = `url("${url}")`;
+                    document.body.style.backgroundImage = `url("${url}")`;
                     localStorage.setItem('lastWallpaper', url);
                     this.cache.lastUpdate = Date.now();
                 } catch(error) {
@@ -449,7 +445,6 @@
                 }
             }, 1000);
         };
-
         // ======== 初始化 ========
         window.addEventListener('DOMContentLoaded', () => {
             const cached = localStorage.getItem('lastWallpaper');
@@ -497,20 +492,27 @@
         });
         // 二级菜单交互
         document.querySelectorAll('.has-submenu').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                item.classList.toggle('active');
-                item.querySelector('a').style.transform = 
-            item.classList.contains('active') 
-            ? 'translateX(5px)' 
-            : 'translateX(0)';
-            });
-        });
-
+    item.addEventListener('click', function(e) {
+        e.preventDefault();
+        const isActive = item.classList.toggle('active');
+        const submenu = this.querySelector('.submenu');
+        
+        // 动态高度计算
+        if(isActive) {
+            submenu.style.maxHeight = submenu.scrollHeight + 'px';
+        } else {
+            submenu.style.maxHeight = '0';
+        }
+        
+        // 优化位移动画
+        this.querySelector('a').style.transform = 
+            isActive ? 'translateX(8px)' : 'translateX(0)';
+    });
+});
         // 搜索功能增强
         const articleIndex = {
             "nt-fps": ["安装指南", "配置教程"],
-            "docs": ["开发日志", "技术分享"],
+            "docs": ["开发日志", "技术分享", "设计思路"],
             "server": "ESS服务器指南",
             "faq": "常见问题解答",
             "other": "其他文档"
@@ -519,20 +521,20 @@
         document.getElementById('searchInput').addEventListener('input', function(e) {
             const query = this.value.trim().toLowerCase();
             const results = [];
-            
+            // 确保在文件末尾添加结果展示逻辑
+const resultEl = document.querySelector('.content-header .description');
+resultEl.textContent = results.length 
+    ? `找到 ${results.length} 个相关结果` 
+    : "没有找到匹配内容";
             // 遍历所有内容
             Object.entries(articleIndex).forEach(([key, value]) => {
-                if (Array.isArray(value)) {
-                    value.forEach(sub => {
-                        if (sub.toLowerCase().includes(query)) {
-                            results.push(`#${key}/${sub}`);
-                        }
-                    });
-                } else {
-                    if (value.toLowerCase().includes(query)) {
-                        results.push(`#${key}`);
-                    }
-                }
+            const content = Array.isArray(value) ? value.join(' ') : value;
+if(content.toLowerCase().includes(query)) {
+    results.push({
+        id: key,
+        content: content
+    });
+	}
             });
             console.log('搜索结果:', results); // 可替换为实际显示逻辑
         });
