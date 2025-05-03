@@ -9,6 +9,19 @@
 
 /* ======== 基础重置 ======== */
 /* ======== 新增顶栏样式 ======== */
+/* 确保内容层级 */
+.top-bar, .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* 内容区半透明效果 */
+.container {
+    background: rgba(255,255,255,0.85);
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
 .top-bar {
     position: fixed;
     top: 0;
@@ -53,6 +66,23 @@ body {
     line-height: 1.6;
     color: var(--text-dark);
     background: #f8f9fa;
+}
+/* ======== 新增背景处理 ======== */
+body {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.88); /* 半透明遮罩 */
+    z-index: -1;
 }
 
 /* ======== 简约顶栏 ======== */
