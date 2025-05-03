@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NTの文档小站</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="preload" href="js/scripts.js" as="script">
 </head>
 <body>
     <div class="loading-indicator">⏳ 正在加载壁纸...</div>
@@ -71,8 +72,11 @@
             <h1>欢迎来到NTの文档中心</h1>
             <p class="description">这里还是白白一片捏，需要你的帮助</p>
         </div>
+        <article id="mainContent" class="markdown-body">
+        <div class="skeleton" style="height: 50px; margin-bottom: 20px;"></div>
+        <div class="skeleton" style="height: 300px;"></div>
+        </article> 
     </main>
-
-    <script src="js/scripts.js"></script>
+<script src="js/scripts.js" defer></script>
 </body>
 </html>
