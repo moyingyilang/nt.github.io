@@ -1,105 +1,102 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <!-- 基础元数据 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="NT技术文档中心 - 提供游戏优化、服务器配置等技术文档">
-    
-    <!-- 页面标题 -->
     <title>NTの文档小站</title>
-    
-    <!-- 本地样式表 -->
     <link rel="stylesheet" href="css/styles.css">
-    
-    <!-- 预加载关键资源 -->
     <link rel="preload" href="js/scripts.js" as="script">
-    
     <!-- 代码高亮插件 -->
     <link rel="stylesheet" 
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 </head>
 <body>
-    <!-- 加载指示器 -->
     <div class="loading-indicator" aria-live="polite">⏳ 正在加载...</div>
     
-    <!-- 主导航 -->
+    <!-- 保留原有导航结构 -->
     <nav class="navbar">
         <div class="navbar-content">
-            <!-- 移动端菜单开关 -->
-            <button class="menu-toggle" 
-                    aria-label="切换导航菜单"
-                    aria-expanded="false"
-                    aria-controls="sidebar">
-                <span class="menu-bar"></span>
-                <span class="menu-bar"></span>
-                <span class="menu-bar"></span>
+            <button 
+                class="menu-toggle" 
+                aria-label="切换导航菜单"
+                aria-expanded="false"
+                aria-controls="sidebar">
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
-            
-            <!-- 网站Logo -->
-            <a href="#home" class="logo">NTの文档</a>
-            
-            <!-- 桌面导航链接 -->
+            <a href="#" class="logo">NTの文档</a>
             <div class="nav-links">
                 <a href="#nt-fps">提升FPS材质包</a>
-                <a href="#docs">技术文档</a>
-                <a href="#server">ESS服务器</a>
+                <a href="#docs">随写文档</a>
+                <a href="#server">牢郎的ess服务器</a>
                 <a href="#faq">常见问题</a>
             </div>
         </div>
     </nav>
 
-    <!-- 侧边栏导航 -->
+    <!-- 保持原有侧边栏结构 -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-search">
             <label for="searchInput" class="visually-hidden">搜索文档</label>
-            <input type="text" 
-                   class="search-input" 
-                   id="searchInput"
-                   placeholder="搜索文档..."
-                   aria-describedby="searchHelp">
-            <div id="searchHelp" class="visually-hidden">输入关键词后按回车搜索</div>
+            <input 
+                type="text" 
+                class="search-input" 
+                placeholder="搜索文档..."
+                id="searchInput"
+                aria-describedby="searchHelp"
+                autocomplete="off">
+            <div id="searchHelp" class="visually-hidden">按回车键搜索</div>
         </div>
-        
-        <!-- 文档目录 -->
-        <div class="sidebar-header">文档目录</div>
-        <nav aria-label="文档分类导航">
+        <div class="sidebar-header">目录</div>
+        <nav aria-label="文档目录">
             <ul class="sidebar-nav">
-                <!-- FPS优化指南 -->
                 <li class="has-submenu">
-                    <a href="#nt-fps">FPS优化指南</a>
+                    <a href="#nt-fps">提升FPS材质包</a>
                     <ul class="submenu">
                         <li><a href="#nt-fps/install">安装指南</a></li>
                         <li><a href="#nt-fps/config">配置教程</a></li>
                     </ul>
                 </li>
-                
-                <!-- ESS服务器指南 -->
                 <li class="has-submenu">
-                    <a href="#server">ESS服务器</a>
+                    <a href="#docs">随写文档</a>
                     <ul class="submenu">
-                        <li><a href="#server/ess">部署指南</a></li>
+                        <li><a href="#log">开发日志</a></li>
+                        <li><a href="#tech">技术分享</a></li>
                     </ul>
                 </li>
-                
-                <!-- 其他文档 -->
+                <li><a href="#server">ESS服务器</a></li>
                 <li><a href="#faq">常见问题</a></li>
-                <li><a href="#other">其他文档</a></li>
+                <li><a href="#other">其他</a></li>
             </ul>
         </nav>
     </aside>
 
-    <!-- 主内容区域 -->
+    <!-- 合并后的主内容区 -->
     <main class="container">
-        <article id="mainContent" class="markdown-body">
-            <!-- 骨架屏占位 -->
-            <div class="skeleton" style="height: 50px; margin-bottom: 20px;"></div>
-            <div class="skeleton" style="height: 300px;"></div>
+        <!-- 保留原有内容头 -->
+        <div class="content-header">
+            <h1>欢迎来到NTの文档中心</h1>
+            <p class="description">这里还是白白一片捏，需要你的帮助</p>
+        </div>
+
+        <!-- 新增壁纸信息层 -->
+        <div class="wallpaper-overlay" id="wallpaperOverlay">
+            <div class="wallpaper-meta">
+                <span id="wallpaperTitle">今日精选壁纸</span>
+                <span id="wallpaperSource">图片来源：Bing每日壁纸</span>
+            </div>
+        </div>
+
+        <!-- 新增文章容器（默认隐藏） -->
+        <article id="articleContent" class="markdown-container" hidden>
+            <button id="closeArticle" class="close-btn" aria-label="关闭文章">×</button>
+            <div class="markdown-body"></div>
         </article>
     </main>
 
-    <!-- 脚本文件 -->
+    <!-- 保持原有脚本引用 -->
     <script src="js/scripts.js" defer></script>
 </body>
 </html>
