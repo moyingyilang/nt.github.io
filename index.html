@@ -20,25 +20,46 @@
         }
 
         body {
+            line-height: 1.6;
+            color: #133            
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
             min-height: 100vh;
             position: relative;
-            line-height: 1.6;
-            color: #333;
+            transition: background-image 0.5s ease-in-out;
         }
         body::after {
             content: '';
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.92);
             z-index: -1;
+            pointer-ebents: none;
         }
+        /*4k*/
+        @media (min-width: 1920px) and (min-resolution: 120dpi) {
+          body{
+           image-rendering:
+ -webkit-optimize-contrast;
+              }
+        }
+
+        /*loading-animation*/
+        .loading-indicator {
+            position: fixed;
+            top: 50%;
+	    left: translate(-50%, -50%);
+	    display: none;
+	    z-index: 1001;
+	}
+	.loading-active .loading-indicator{
+	   display: block;
+	}
         /* 导航栏 */
         .navbar {
             background: var(--primary-blue);
@@ -257,6 +278,7 @@
     </style>
 </head>
 <body>
+    <div class="loading-indicator">⏳ 正在加载壁纸...</div>
     <nav class="navbar">
         <div class="navbar-content">
             <button 
@@ -269,12 +291,6 @@
                 <span></span>
             </button>
             <a href="#" class="logo">NTの文档</a>
-            <div class="nav-links">
-                <a href="#re-release">NTの提升FPS材质包</a>
-                <a href="#docs">随写文档</a>
-                <a href="#server">牢郎的ess服务器</a>
-                <a href="#faq">常见问题</a>
-            </div>
         </div>
     </nav>
 
@@ -298,29 +314,95 @@
         </nav>
     </aside>   
     <script>
-        // 新增Bing壁纸加载功能
-        function setBingWallpaper() {
-            // 国内可访问的Bing API接口
-            const apiUrl = 'https://bingw.jasonzeng.dev/?resolution=1920&format=json';
-            
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    const imgUrl = data.images[0].url;
-                    document.body.style.backgroundImage = `url(${imgUrl})`;
-                    document.body.style.backgroundSize = 'cover';
-                })
-                .catch(error => {
-                    console.log('壁纸加载失败，使用默认背景:', error);
-                    document.body.style.background = '#f0f2f5';
-                });
-        }
+        const deviceDetector = {
+            isMobile: () => {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                    window.matchMedia("(max-width: 768px)").matches;
+            },
+            isRetina: () => window.devicePixelRatio >= 2
+        };
+	const wallpaperManager = {
+            cache: {
+                lastUpdate: null,
+                desktop: null,
+                mobile: null
+            },
 
+            getWallpaperUrl: () => {
+                const baseUrl = deviceDetector.isMobile() ? 
+                    'https://bing.img.run/m.php' : 
+                    'https://bing.img.run/uhd.php';
+        const params = new URLSearchParams({
+                    t: new Date().getTime(),
+                    q: deviceDetector.isRetina() ? 100 : 85
+                });
+
+                return `${baseUrl}?${params}`;
+            },
+
+            preloadImage: (url) => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.src = url;
+                    img.onload = () => resolve(url);
+                    img.onerror = (err) => reject(err);
+                });
+            },
+
+            setBackground: async () => {
+                try {
+                    document.body.classList.add('loading-active');
+                    
+                    const wallpaperUrl = this.getWallpaperUrl();
+                    await this.preloadImage(wallpaperUrl);
+                    
+                    document.body.style.backgroundImage = `url("${wallpaperUrl}")`;
+                    localStorage.setItem('lastWallpaper', wallpaperUrl);
+                    this.cache.lastUpdate = Date.now();
+
+                } catch (error) {
+                    console.error('壁纸加载失败:', error);
+                    this.useFallbackBackground();
+                } finally {
+                    document.body.classList.remove('loading-active');
+                }
+            },
+
+            useFallbackBackground: () => {
+                const fallbacks = [
+                    'https://source.unsplash.com/random/1920x1080/?nature',
+                    'https://source.unsplash.com/random/1920x1080/?tech'
+                ];
+                const fallbackUrl = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+                document.body.style.backgroundImage = `url("${fallbackUrl}")`;
+            }
+        };
+	let resizeTimer;
+        const handleResize = () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if(Date.now() - wallpaperManager.cache.lastUpdate > 300000) {
+                    wallpaperManager.setBackground();
+                }
+            }, 1000);
+        };
+	window.addEventListener('DOMContentLoaded', () => {
+            // 尝试使用缓存
+            const cachedWallpaper = localStorage.getItem('lastWallpaper');
+            if(cachedWallpaper) {
+                document.body.style.backgroundImage = `url("${cachedWallpaper}")`;
+            }
+
+            // 加载最新壁纸
+            wallpaperManager.setBackground();
+            
+            // 每2小时更新
+            setInterval(wallpaperManager.setBackground, 7200000);
+            window.addEventListener('resize', handleResize);
+        });
         // 页面加载时设置壁纸
         window.addEventListener('DOMContentLoaded', setBingWallpaper);
 
-        // 每6小时自动更新壁纸
-        setInterval(setBingWallpaper, 21600000);
         // DOM元素缓存
         const menuToggle = document.querySelector('.menu-toggle');
         const sidebar = document.querySelector('.sidebar');
