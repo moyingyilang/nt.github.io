@@ -1,60 +1,4 @@
-/* styles.css */
-/* ======== 基础变量 ======== */
-:root {
-    --primary-blue: #2c3e50;
-    --accent-blue: #3498db;
-    --text-dark: #34495e;
-    --container-padding: 2rem;
-}
-
-/* ======== 基础重置 ======== */
-/* ======== 新增顶栏样式 ======== */
-/* 确保内容层级 */
-.top-bar, .container {
-    position: relative;
-    z-index: 1;
-}
-
-/* 内容区半透明效果 */
-.container {
-    background: rgba(255,255,255,0.85);
-    border-radius: 8px;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-}
-.top-bar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 60px;
-    padding: 0 2rem;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    background: rgba(255,255,255,0.98);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    z-index: 1000;
-}
-
-.brand-logo {
-    color: #2c3e50;
-    font-size: 1.3rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    position: relative;
-    padding-right: 20px;
-}
-
-.brand-logo::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 24px;
-    width: 2px;
-    background: #e0e0e0;
-}
+/* 基础样式 */
 * {
     margin: 0;
     padding: 0;
@@ -62,115 +6,107 @@
 }
 
 body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    line-height: 1.6;
-    color: var(--text-dark);
-    background: #f8f9fa;
-}
-/* ======== 新增背景处理 ======== */
-body {
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    position: relative;
 }
 
-body::after {
+/* 背景层 */
+body::before {
     content: '';
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,0.88); /* 半透明遮罩 */
+    z-index: -2;
+    background-size: cover;
+    background-position: center;
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
     z-index: -1;
 }
 
-/* ======== 简约顶栏 ======== */
+/* 顶栏 */
 .top-bar {
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 1rem 2rem;
+    height: 60px;
+    background: rgba(128, 128, 128, 0.8);
+    backdrop-filter: blur(8px);
     display: flex;
-    justify-content: flex-end;
-    background: rgba(255,255,255,0.96);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    align-items: center;
+    padding: 0 20px;
     z-index: 1000;
 }
 
-.brand-logo {
-    color: var(--primary-blue);
+.logo {
+    color: #fff;
     font-size: 1.4rem;
-    font-weight: 600;
-    letter-spacing: 1px;
+    margin-left: auto;
 }
 
-/* ======== 主内容区 ======== */
-.container {
-    max-width: 1200px;
-    margin: 5rem auto 0;
-    padding: var(--container-padding);
+/* 侧边栏 */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 60px;
+    bottom: 0;
+    width: 260px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
 }
 
-.content-header {
-    text-align: center;
-    margin-bottom: 3rem;
+.sidebar ul {
+    list-style: none;
+    margin-top: 20px;
 }
 
-.content-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+.sidebar li {
+    margin: 15px 0;
 }
 
-/* ======== 保留的必要样式 ======== */
-.markdown-body {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+.sidebar a {
+    text-decoration: none;
+    color: #333;
+    font-size: 1.1rem;
 }
 
-pre {
-    margin: 1.5rem 0;
-    background: #1e1e1e !important;
-    border-radius: 8px;
-    overflow-x: auto;
-}
-
-pre code {
-    display: block;
-    padding: 1.5rem !important;
-    font-family: 'SFMono-Regular', Consolas, monospace;
-    color: #d4d4d4;
-}
-
-/* ======== 响应式适配 ======== */
-@media (max-width: 992px) {
-    .container {
-        padding: 1rem;
-        margin-top: 4rem;
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 80%;
+        transform: translateX(-100%);
     }
-    
-    .brand-logo {
-        font-size: 1.2rem;
+
+    .sidebar.active {
+        transform: translateX(0);
     }
-    
-    .content-header h1 {
-        font-size: 2rem;
+
+    .menu-toggle {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: #fff;
+        cursor: pointer;
     }
-    
-    @media (max-width: 768px) {
-    /* 新增移动端顶栏适配 */
-    .top-bar {
-        height: 50px;
-        padding: 0 1rem;
-    }
-    .brand-logo {
-        font-size: 1.1rem;
-        padding-right: 15px;
-    }
-    .brand-logo::after {
-        height: 20px;
-    }
+}
+
+/* 桌面端样式 */
+@media (min-width: 769px) {
+    .menu-toggle {
+        display: none;
     }
 }

@@ -1,42 +1,31 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTの文档小站</title>
+    <title>NTの文档</title>
     <link rel="stylesheet" href="css/styles.css">
-    <!-- 代码高亮插件 -->
-    <link rel="stylesheet" 
-          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 </head>
 <body>
-    <!-- 壁纸动态加载容器 -->
-    <div id="bingWallpaper"></div>
-    <!-- 简约顶栏 -->
+    <!-- 背景遮罩层 -->
+    <div class="background-overlay"></div>
+    
+    <!-- 顶栏 -->
     <header class="top-bar">
-        <div class="brand-logo">NTの文档</div>
+        <button class="menu-toggle">☰</button>
+        <div class="logo">NTの文档</div>
     </header>
 
-    <!-- 主内容区 -->
-    <main class="container">
-        <div class="content-header">
-            <h1>欢迎来到NTの文档中心</h1>
-            <p class="description">这里还是白白一片捏，需要你的帮助</p>
-        </div>
+    <!-- 侧边栏 -->
+    <nav class="sidebar">
+        <h3>文档目录</h3>
+        <ul>
+            <li><a href="#">第一章</a></li>
+            <li><a href="#">第二章</a></li>
+            <!-- 更多目录项... -->
+        </ul>
+    </nav>
 
-        <!-- 文档内容区 -->
-        <div class="doc-content">
-            <article class="markdown-body">
-                <h2>性能优化指南</h2>
-                <pre><code class="language-javascript">// 示例代码
-function optimize() {
-    console.log('性能优化方案');
-}</code></pre>
-            </article>
-        </div>
-    </main>
-    <script src="js/scripts.js" defer></script>
+    <script src="js/scripts.js"></script>
 </body>
 </html>
