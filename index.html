@@ -4,80 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTの文档小站</title>
+    <title>NTの极简文档</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="preload" href="js/scripts.js" as="script">
-    <!-- 代码高亮插件 -->
-    <link rel="stylesheet" 
-          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 </head>
 <body>
-    <div class="loading-indicator" aria-live="polite">⏳ 正在加载...</div>
-    
-    <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="navbar-content">
-            <button 
-                class="menu-toggle" 
-                id="menuToggle"
-                aria-label="切换导航菜单"
-                aria-expanded="false"
-                aria-controls="sidebar">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <a href="#" class="logo">NTの文档</a>
-        </div>
+    <nav class="nav">
+        <ul class="nav-list">
+            <li><a href="#fps" class="nav-link">FPS优化</a></li>
+            <li><a href="#server" class="nav-link">服务器配置</a></li>
+            <li><a href="#faq" class="nav-link">常见问题</a></li>
+            <li><a href="#contact" class="nav-link">联系作者</a></li>
+        </ul>
     </nav>
 
-    <!-- 侧边栏 -->
-    <aside class="sidebar" id="sidebar" aria-modal="true" aria-hidden="true">
-        <nav aria-label="文档目录">
-            <ul class="sidebar-nav">
-                <li class="has-submenu">
-                    <a href="#nt-fps">提升FPS材质包</a>
-                    <ul class="submenu">
-                        <li><a href="#nt-fps/install">安装指南</a></li>
-                        <li><a href="#nt-fps/config">配置教程</a></li>
-                    </ul>
-                </li>
-                <li class="has-submenu">
-                    <a href="#docs">随写文档</a>
-                    <ul class="submenu">
-                        <li><a href="#log">开发日志</a></li>
-                        <li><a href="#tech">技术分享</a></li>
-                    </ul>
-                </li>
-                <li><a href="#server">ESS服务器</a></li>
-                <li><a href="#faq">常见问题</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <header class="main-header">
+        <h1>NTの技术文档</h1>
+        <p>简单直白的解决方案，没有套路</p>
+    </header>
 
-    <!-- 主内容区 -->
-    <main class="container">
-        <div class="content-header">
-            <h1>欢迎来到NTの文档中心</h1>
-            <p class="description">这里还是白白一片捏，需要你的帮助</p>
-        </div>
-
-        <!-- 壁纸信息层 -->
-        <div class="wallpaper-overlay" id="wallpaperOverlay">
-            <div class="wallpaper-meta">
-                <span id="wallpaperTitle">今日精选壁纸</span>
-                <span id="wallpaperSource">图片来源：Bing每日壁纸</span>
+    <main>
+        <section class="doc-section" id="fps">
+            <h2>🏎️ FPS优化指南</h2>
+            <div class="doc-card">
+                <h3 class="doc-title">基础配置方案</h3>
+                <p class="doc-desc">适合中低端设备的优化方案，提升帧率同时保持画质</p>
             </div>
-        </div>
+            <div class="doc-card">
+                <h3 class="doc-title">极致性能方案</h3>
+                <p class="doc-desc">为竞技玩家准备的极限优化配置，榨干硬件性能</p>
+            </div>
+        </section>
 
-        <!-- 文章容器 -->
-        <article id="articleContent" class="markdown-container" hidden>
-            <button id="closeArticle" class="close-btn" aria-label="关闭文章">×</button>
-            <div class="markdown-body"></div>
-        </article>
+        <section class="doc-section" id="server">
+            <h2>🖥️ 服务器搭建</h2>
+            <div class="doc-card">
+                <h3 class="doc-title">基础环境配置</h3>
+                <p class="doc-desc">从零开始搭建稳定可用的游戏服务器环境</p>
+            </div>
+            <div class="doc-card">
+                <h3 class="doc-title">安全防护指南</h3>
+                <p class="doc-desc">防范DDoS攻击和非法入侵的实用方案</p>
+            </div>
+        </section>
     </main>
-
-    <script src="js/scripts.js" defer></script>
 </body>
 </html>
