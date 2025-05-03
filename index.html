@@ -4,57 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NT极简文档</title>
+    <title>NTの文档小站</title>
     <link rel="stylesheet" href="css/styles.css">
+    <!-- 代码高亮插件 -->
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 </head>
 <body>
-    <!-- 固定顶栏 -->
+    <!-- 简约顶栏 -->
     <header class="top-bar">
-        <div class="brand">
-            <span class="logo">NT</span>
-            <span class="site-name">技术文档中心</span>
-        </div>
-        <nav class="global-nav">
-            <a href="#fps" class="nav-item">FPS优化</a>
-            <a href="#server" class="nav-item">服务器配置</a>
-            <a href="#qa" class="nav-item">常见问题</a>
-        </nav>
+        <div class="brand-logo">NTの文档</div>
     </header>
 
     <!-- 主内容区 -->
-    <main class="content">
-        <section class="doc-section" id="fps">
-            <h1 class="section-title">🏁 性能优化指南</h1>
-            
-            <article class="doc-card">
-                <h2 class="doc-title">基础配置方案</h2>
-                <div class="doc-content">
-                    <p>适用于中端设备的优化配置清单：</p>
-                    <ul>
-                        <li>纹理质量：中等</li>
-                        <li>阴影渲染：关闭</li>
-                        <li>视距设置：8 chunks</li>
-                    </ul>
-                </div>
-            </article>
+    <main class="container">
+        <div class="content-header">
+            <h1>欢迎来到NTの文档中心</h1>
+            <p class="description">这里还是白白一片捏，需要你的帮助</p>
+        </div>
 
-            <article class="doc-card">
-                <h2 class="doc-title">竞技模式配置</h2>
-                <div class="doc-content">
-                    <p>电竞选手专用配置方案：</p>
-                    <ul>
-                        <li>强制启用垂直同步</li>
-                        <li>帧率限制：144 FPS</li>
-                        <li>动态模糊：禁用</li>
-                    </ul>
-                </div>
+        <!-- 文档内容区 -->
+        <div class="doc-content">
+            <article class="markdown-body">
+                <h2>性能优化指南</h2>
+                <pre><code class="language-javascript">// 示例代码
+function optimize() {
+    console.log('性能优化方案');
+}</code></pre>
             </article>
-        </section>
-
-        <section class="doc-section" id="server">
-            <h1 class="section-title">🖥️ 服务器搭建</h1>
-            <!-- 更多文档卡片... -->
-        </section>
+        </div>
     </main>
+
+    <script src="js/scripts.js" defer></script>
 </body>
 </html>
