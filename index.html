@@ -105,6 +105,7 @@
         .sidebar {
             width: 280px;
             background: var(--light-bg);
+            backdrop-filter: blur(2px);
             position: fixed;
             left: 0;
             top: 70px;
@@ -155,7 +156,25 @@
             background: #e9ecef;
             padding-left: 1rem;
         }
-
+        
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-left: 1.5rem;
+        }
+        .submenu.active {
+            max-height: 500px;
+        }
+        .has-submenu::after {
+            content: "▶";
+            float: right;
+            transition: transform 0.3s;
+        }
+        .has-submenu.active::after {
+            transform: rotate(90deg);
+        }
+        
         /* 主内容区 */
         .container {
             margin-left: 280px;
@@ -329,7 +348,27 @@
         </div>
         <div class="sidebar-header">目录</div>
         <nav aria-label="文档目录">
-        
+            <ul class="sidebar-nav">
+                <!-- 可展开项 -->
+                <li class="has-submenu">
+                    <a href="#nt-fps">NTの提升FPS材质包</a>
+                    <ul class="submenu">
+                        <li><a href="#install">安装指南</a></li>
+                        <li><a href="#config">配置教程</a></li>
+                    </ul>
+                </li>
+                <li class="has-submenu">
+                    <a href="#docs">随写文档</a>
+                    <ul class="submenu">
+                        <li><a href="#log">开发日志</a></li>
+                        <li><a href="#tech">技术分享</a></li>
+                    </ul>
+                </li>
+                <!-- 直接链接项 -->
+                <li><a href="#server">牢郎的ESS服务器</a></li>
+                <li><a href="#faq">常见问题</a></li>
+                <li><a href="#other">其他</a></li>
+            </ul>
         </nav>
     </aside>
     
@@ -454,6 +493,44 @@
                     e.target.value = '';
                 }
             }
+        });
+        // 二级菜单交互
+        document.querySelectorAll('.has-submenu').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                item.classList.toggle('active');
+                item.querySelector('.submenu').classList.toggle('active');
+            });
+        });
+
+        // 搜索功能增强
+        const articleIndex = {
+            "nt-fps": ["安装指南", "配置教程"],
+            "docs": ["开发日志", "技术分享"],
+            "server": "ESS服务器指南",
+            "faq": "常见问题解答",
+            "other": "其他文档"
+        };
+
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const query = this.value.trim().toLowerCase();
+            const results = [];
+            
+            // 遍历所有内容
+            Object.entries(articleIndex).forEach(([key, value]) => {
+                if (Array.isArray(value)) {
+                    value.forEach(sub => {
+                        if (sub.toLowerCase().includes(query)) {
+                            results.push(`#${key}/${sub}`);
+                        }
+                    });
+                } else {
+                    if (value.toLowerCase().includes(query)) {
+                        results.push(`#${key}`);
+                    }
+                }
+            });
+            console.log('搜索结果:', results); // 可替换为实际显示逻辑
         });
     </script>
 </body>
