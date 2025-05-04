@@ -290,6 +290,51 @@
             clip: rect(0, 0, 0, 0);
             border: 0;
         }
+        /* ========== 新增二级菜单样式 ========== */
+        .sidebar-nav .has-submenu {
+            position: relative;
+        }
+
+        /* 菜单项箭头图标 */
+        .has-submenu > a::after {
+            content: "▸";
+            float: right;
+            transition: transform 0.3s;
+        }
+
+        /* 展开状态箭头旋转 */
+        .has-submenu.active > a::after {
+            transform: rotate(90deg);
+        }
+
+        /* 子菜单样式 */
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            padding-left: 1rem;
+            transition: max-height 0.3s ease-out;
+            background: rgba(233, 236, 239, 0.3);
+        }
+
+        /* 展开状态 */
+        .has-submenu.active .submenu {
+            max-height: 500px; /* 根据实际内容调整 */
+        }
+
+        /* 移动端专属样式 */
+        @media (max-width: 992px) {
+            /* 桌面端悬停展开 */
+            @media (hover: hover) {
+                .has-submenu:hover .submenu {
+                    max-height: 500px;
+                }
+            }
+
+            /* 移动端点击展开 */
+            .has-submenu > a {
+                pointer-events: auto !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -315,21 +360,34 @@
         </div>
     </nav>
 
+<!-- ========== 补充侧边栏菜单结构 ========== -->
     <aside class="sidebar">
-        <div class="sidebar-search">
-            <label for="searchInput" class="visually-hidden">文档搜索</label>
-            <input 
-                type="text" 
-                class="search-input" 
-                placeholder="搜索文档..."
-                id="searchInput"
-                aria-describedby="searchHelp"
-            >
-            <div id="searchHelp" class="visually-hidden">按回车键执行搜索</div>
-        </div>
-        <div class="sidebar-header">目录</div>
+        <div class="sidebar-header">文档目录</div>
         <nav aria-label="文档目录">
-        
+            <ul class="sidebar-nav">
+                <!-- 带二级菜单的条目 -->
+                <li class="has-submenu">
+                    <a href="#nt-fps">🎮 提升FPS材质包</a>
+                    <ul class="submenu">
+                        <li><a href="#install">📥 安装指南</a></li>
+                        <li><a href="#config">⚙️ 配置教程</a></li>
+                        <li><a href="#qa">❓ 常见问题</a></li>
+                    </ul>
+                </li>
+
+                <!-- 另一个带二级菜单的条目 -->
+                <li class="has-submenu">
+                    <a href="#server">🏰 ESS服务器文档</a>
+                    <ul class="submenu">
+                        <li><a href="#setup">🛠️ 服务器搭建</a></li>
+                        <li><a href="#plugins">🔌 插件配置</a></li>
+                        <li><a href="#maintenance">🔧 维护指南</a></li>
+                    </ul>
+                </li>
+
+                <!-- 单级菜单 -->
+                <li><a href="#faq">❓ 常见问题汇总</a></li>
+            </ul>
         </nav>
     </aside>
     
@@ -454,6 +512,49 @@
                     e.target.value = '';
                 }
             }
+        });
+        // ========== 二级菜单交互逻辑 ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取所有带子菜单的项
+            const submenuItems = document.querySelectorAll('.has-submenu');
+
+            // 处理菜单点击
+            submenuItems.forEach(item => {
+                const link = item.querySelector('a');
+                
+                link.addEventListener('click', (e) => {
+                    // 移动端专属处理
+                    if (window.innerWidth <= 992) {
+                        e.preventDefault();
+                        item.classList.toggle('active');
+                        
+                        // 关闭其他展开的菜单
+                        submenuItems.forEach(otherItem => {
+                            if (otherItem !== item) {
+                                otherItem.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            });
+
+            // 点击外部关闭菜单（移动端）
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.has-submenu') && window.innerWidth <= 992) {
+                    submenuItems.forEach(item => {
+                        item.classList.remove('active');
+                    });
+                }
+            });
+
+            // 窗口大小变化重置状态
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 992) {
+                    submenuItems.forEach(item => {
+                        item.classList.remove('active');
+                    });
+                }
+            });
         });
     </script>
 </body>
