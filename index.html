@@ -263,12 +263,74 @@
         .menu-toggle.active span:nth-child(3) {
             transform: translate(-50%, -6px) rotate(-45deg);
         }
+        
+        /* 新增夜间模式变量 */
+    :root {
+        --night-bg: #1a1a1a;
+        --night-text: #e0e0e0;
+        --night-primary: #2c3e50;
+        --night-accent: #3498db;
+        --night-border: #404040;
+    }
+
+    /* 夜间模式样式 */
+    body.night-mode {
+        --primary-blue: var(--night-primary);
+        --accent-blue: var(--night-accent);
+        --text-dark: var(--night-text);
+        --light-bg: rgba(26, 26, 26, 0.9);
+        
+        background-color: var(--night-bg);
+        color: var(--night-text);
+    }
+
+    body.night-mode::after {
+        background: rgba(0, 0, 0, 0.85);
+    }
+
+    .night-mode .sidebar {
+        border-right-color: var(--night-border);
+    }
+
+    .night-mode .sidebar-nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* 切换按钮样式 */
+    .theme-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        margin-left: 20px;
+        transition: transform 0.3s;
+    }
+
+    .theme-toggle:hover {
+        transform: rotate(15deg);
+    }
+
+    .night-icon { display: none; }
+    .night-mode .day-icon { display: none; }
+    .night-mode .night-icon { display: inline; }
+
+    @media (max-width: 992px) {
+        .theme-toggle {
+            position: absolute;
+            right: 20px;
+        }
+    }
     </style>
 </head>
 <body>
     <div class="loading-indicator">⏳ 正在加载壁纸...</div>
     <nav class="navbar">
         <div class="navbar-content">
+    <!-- 新增夜间模式切换按钮 -->
+            <button class="theme-toggle" aria-label="切换主题">
+            <span class="day-icon">🌞</span>
+            <span class="night-icon">🌙</span>
+            </button>
             <button class="menu-toggle" aria-label="菜单开关">
                 <span></span>
                 <span></span>
@@ -443,6 +505,30 @@
             // 侧边栏初始化
             initSidebar();
         });
+        // 新增主题切换功能
+    const themeToggle = document.querySelector('.theme-toggle');
+    
+    // 初始化主题状态
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'night') document.body.classList.add('night-mode');
+
+    // 切换主题
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('night-mode');
+        localStorage.setItem('theme', 
+            document.body.classList.contains('night-mode') ? 'night' : 'light'
+        );
+    });
+
+    // 在DOMContentLoaded事件中初始化
+    window.addEventListener('DOMContentLoaded', () => {
+        // 原有初始化代码...
+        
+        // 添加主题初始化
+        if (localStorage.getItem('theme') === 'night') {
+            document.body.classList.add('night-mode');
+        }
+    });
     </script>
 </body>
 </html>
