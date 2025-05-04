@@ -155,6 +155,55 @@
             background: #e9ecef;
             padding-left: 1rem;
         }
+        
+/* ========== 二级菜单优化 ========== */
+.has-submenu > a {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem !important;
+}
+
+.has-submenu > a::before {
+    content: "▾";
+    order: -1;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-right: 0.8rem;
+    font-size: 1.1em;
+}
+
+.has-submenu.active > a::before {
+    transform: rotate(-180deg);
+}
+
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    padding-left: 1.2rem;
+    transition: max-height 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.has-submenu.active .submenu {
+    max-height: 1000px; /* 根据实际内容自适应 */
+}
+
+.menu-text {
+    flex: 1;
+    text-align: right;
+    padding-right: 0.5rem;
+}
+
+/* 移动端优化 */
+@media (max-width: 992px) {
+    .has-submenu > a::before {
+        margin-right: 0.5rem;
+        font-size: 1em;
+    }
+    
+    .submenu {
+        transition-duration: 0.3s;
+    }
+}
 
         /* 主内容区 */
         .container {
@@ -290,51 +339,6 @@
             clip: rect(0, 0, 0, 0);
             border: 0;
         }
-        /* ========== 新增二级菜单样式 ========== */
-        .sidebar-nav .has-submenu {
-            position: relative;
-        }
-
-        /* 菜单项箭头图标 */
-        .has-submenu > a::after {
-            content: "▸";
-            float: right;
-            transition: transform 0.3s;
-        }
-
-        /* 展开状态箭头旋转 */
-        .has-submenu.active > a::after {
-            transform: rotate(90deg);
-        }
-
-        /* 子菜单样式 */
-        .submenu {
-            max-height: 0;
-            overflow: hidden;
-            padding-left: 1rem;
-            transition: max-height 0.3s ease-out;
-            background: rgba(233, 236, 239, 0.3);
-        }
-
-        /* 展开状态 */
-        .has-submenu.active .submenu {
-            max-height: 500px; /* 根据实际内容调整 */
-        }
-
-        /* 移动端专属样式 */
-        @media (max-width: 992px) {
-            /* 桌面端悬停展开 */
-            @media (hover: hover) {
-                .has-submenu:hover .submenu {
-                    max-height: 500px;
-                }
-            }
-
-            /* 移动端点击展开 */
-            .has-submenu > a {
-                pointer-events: auto !important;
-            }
-        }
     </style>
 </head>
 <body>
@@ -360,33 +364,37 @@
         </div>
     </nav>
 
-<!-- ========== 补充侧边栏菜单结构 ========== -->
+    <!-- ========== 补充侧边栏菜单结构 ========== -->
     <aside class="sidebar">
-        <div class="sidebar-header">文档目录</div>
-        <nav aria-label="文档目录">
-            <ul class="sidebar-nav">
-                <!-- 带二级菜单的条目 -->
-                <li class="has-submenu">
-                    <a href="#nt-fps">🎮 提升FPS材质包</a>
-                    <ul class="submenu">
-                        <li><a href="#install">📥 安装指南</a></li>
-                        <li><a href="#config">⚙️ 配置教程</a></li>
-                        <li><a href="#qa">❓ 常见问题</a></li>
-                    </ul>
-                </li>
+    <div class="sidebar-header">文档目录</div>
+    <nav aria-label="文档目录">
+        <ul class="sidebar-nav">
+            <!-- 带二级菜单的条目 -->
+            <li class="has-submenu">
+                <a href="#nt-fps">
+                    <span class="menu-text">🎮 提升FPS材质包</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="#install">📥 安装指南</a></li>
+                    <li><a href="#config">⚙️ 配置教程</a></li>
+                    <li><a href="#qa">❓ 常见问题</a></li>
+                </ul>
+            </li>
 
-                <!-- 另一个带二级菜单的条目 -->
-                <li class="has-submenu">
-                    <a href="#server">🏰 ESS服务器文档</a>
-                    <ul class="submenu">
-                        <li><a href="#setup">🛠️ 服务器搭建</a></li>
-                        <li><a href="#plugins">🔌 插件配置</a></li>
-                        <li><a href="#maintenance">🔧 维护指南</a></li>
-                    </ul>
-                </li>
+            <!-- 另一个带二级菜单的条目 -->
+            <li class="has-submenu">
+                <a href="#server">
+                    <span class="menu-text">🏰 ESS服务器文档</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="#setup">🛠️ 服务器搭建</a></li>
+                    <li><a href="#plugins">🔌 插件配置</a></li>
+                    <li><a href="#maintenance">🔧 维护指南</a></li>
+                </ul>
+            </li>
 
-                <!-- 单级菜单 -->
-                <li><a href="#faq">❓ 常见问题汇总</a></li>
+            <!-- 修正后的单级菜单 -->
+            <li><a href="#faq">❓ 常见问题汇总</a></li>
             </ul>
         </nav>
     </aside>
@@ -556,6 +564,41 @@
                 }
             });
         });
+        
+        // ========== 二级菜单交互优化 ==========
+document.addEventListener('DOMContentLoaded', () => {
+    const submenuParents = document.querySelectorAll('.has-submenu');
+    
+    submenuParents.forEach(parent => {
+        const link = parent.querySelector('a');
+        
+        link.addEventListener('click', function(e) {
+            if (window.innerWidth > 992) return;
+            
+            e.preventDefault();
+            const wasActive = parent.classList.contains('active');
+            
+            // 关闭其他菜单
+            submenuParents.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 切换当前状态
+            if (!wasActive) {
+                parent.classList.add('active');
+            }
+        });
+    });
+
+    // 点击外部关闭
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.has-submenu') && window.innerWidth <= 992) {
+            submenuParents.forEach(item => {
+                item.classList.remove('active');
+            });
+        }
+    });
+});
     </script>
 </body>
 </html>
