@@ -43,7 +43,7 @@
             pointer-events: none;
         }
 
-	/* 4K优化 */
+        /* 4K优化 */
         @media (min-width: 1920px) and (min-resolution: 120dpi) {
             body {
                 image-rendering: -webkit-optimize-contrast;
@@ -112,9 +112,7 @@
             overflow-y: auto;
             padding: 1.5rem;
             border-right: 1px solid #eee;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 999;
-            backdrop-filter: blur(4px);
+            transition: transform 0.3s;
         }
 
         .sidebar-search {
@@ -157,6 +155,55 @@
             background: #e9ecef;
             padding-left: 1rem;
         }
+        
+/* ========== 二级菜单优化 ========== */
+.has-submenu > a {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem !important;
+}
+
+.has-submenu > a::before {
+    content: "▾";
+    order: -1;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-right: 0.8rem;
+    font-size: 1.1em;
+}
+
+.has-submenu.active > a::before {
+    transform: rotate(-180deg);
+}
+
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    padding-left: 1.2rem;
+    transition: max-height 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.has-submenu.active .submenu {
+    max-height: 1000px; /* 根据实际内容自适应 */
+}
+
+.menu-text {
+    flex: 1;
+    text-align: right;
+    padding-right: 0.5rem;
+}
+
+/* 移动端优化 */
+@media (max-width: 992px) {
+    .has-submenu > a::before {
+        margin-right: 0.5rem;
+        font-size: 1em;
+    }
+    
+    .submenu {
+        transition-duration: 0.3s;
+    }
+}
 
         /* 主内容区 */
         .container {
@@ -167,22 +214,46 @@
             text-align: left;
         }
 
+        /* 文档分类 */
+        .doc-categories {
+            display: none !important;
+        }
+        
         .content-header h1 {
-            font-size: 2.2rem;
-            color: var(--primary-blue);
-            margin-bottom: 1rem;
+        	font-size: 2.2rem;
+    		color: var(--primary-blue);
+    		margin-bottom: 1rem;
+		}
+
+		.content-header .description {
+    		font-size: 1.1rem;
+    		color: #666;
+    		line-height: 1.8;
+		}
+
+        .category-card {
+            background: var(--light-bg);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
         }
 
-        .content-header .description {
-            font-size: 1.1rem;
-            color: #666;
-            line-height: 1.8;
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .category-card h3 {
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
         }
 
         /* 响应式设计 */
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(-100%);
+                top: 70px;
+                z-index: 1000;
                 width: 280px;
                 background: rgba(248, 249, 250, 0.96);
                 backdrop-filter: blur(2px);
@@ -191,8 +262,9 @@
 
             .container {
                 margin-left: 0;
+                max-width: 100%;
                 padding: 1rem;
-            }
+        }
 
             .menu-toggle {
                 display: block !important;
@@ -202,34 +274,22 @@
                 display: none;
             }
 
+            .doc-categories {
+                grid-template-columns: 1fr;
+            }
+
             .sidebar.active {
                 transform: translateX(0);
             }
         }
 
-        /* 二级菜单核心样式 */
-        .has-submenu > a::after {
-            content: "▸";
-            float: right;
-            transition: transform 0.3s;
+        @media (hover: none) {
+            .category-card:hover {
+                transform: none;
+            }
         }
 
-        .has-submenu.active > a::after {
-            transform: rotate(90deg);
-        }
-
-        .submenu {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            padding-left: 1rem;
-        }
-
-        .has-submenu.active .submenu {
-            max-height: 500px;
-        }
-
-        /* 汉堡菜单 */
+        /* 汉堡菜单动画 */
         .menu-toggle {
             display: none;
             background: none;
@@ -247,7 +307,8 @@
             background: white;
             left: 50%;
             transform: translateX(-50%);
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
         }
 
         .menu-toggle span:nth-child(1) { top: 10px; }
@@ -255,15 +316,28 @@
         .menu-toggle span:nth-child(3) { top: 22px; }
 
         .menu-toggle.active span:nth-child(1) {
-            transform: translate(-50%, 6px) rotate(45deg);
+            transform: translateX(-50%) translateY(6px) rotate(45deg);
         }
 
         .menu-toggle.active span:nth-child(2) {
             opacity: 0;
+            transform: translateX(-50%) scaleX(0);
         }
 
         .menu-toggle.active span:nth-child(3) {
-            transform: translate(-50%, -6px) rotate(-45deg);
+            transform: translateX(-50%) translateY(-6px) rotate(-45deg);
+        }
+
+        /* 辅助样式 */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
         }
     </style>
 </head>
@@ -271,7 +345,11 @@
     <div class="loading-indicator">⏳ 正在加载壁纸...</div>
     <nav class="navbar">
         <div class="navbar-content">
-            <button class="menu-toggle" aria-label="菜单开关">
+            <button 
+                class="menu-toggle" 
+                aria-label="切换导航菜单"
+                aria-expanded="false"
+            >
                 <span></span>
                 <span></span>
                 <span></span>
@@ -286,42 +364,50 @@
         </div>
     </nav>
 
+    <!-- ========== 补充侧边栏菜单结构 ========== -->
     <aside class="sidebar">
-        <div class="sidebar-header">文档目录</div>
-        <nav aria-label="文档目录">
-            <ul class="sidebar-nav">
-                <li class="has-submenu">
-                    <a href="#nt-fps">🎮 提升FPS材质包</a>
-                    <ul class="submenu">
-                        <li><a href="#install">📥 安装指南</a></li>
-                        <li><a href="#config">⚙️ 配置教程</a></li>
-                        <li><a href="#qa">❓ 常见问题</a></li>
-                    </ul>
-                </li>
+    <div class="sidebar-header">文档目录</div>
+    <nav aria-label="文档目录">
+        <ul class="sidebar-nav">
+            <!-- 带二级菜单的条目 -->
+            <li class="has-submenu">
+                <a href="#nt-fps">
+                    <span class="menu-text">🎮 提升FPS材质包</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="#install">📥 安装指南</a></li>
+                    <li><a href="#config">⚙️ 配置教程</a></li>
+                    <li><a href="#qa">❓ 常见问题</a></li>
+                </ul>
+            </li>
 
-                <li class="has-submenu">
-                    <a href="#server">🏰 ESS服务器文档</a>
-                    <ul class="submenu">
-                        <li><a href="#setup">🛠️ 服务器搭建</a></li>
-                        <li><a href="#plugins">🔌 插件配置</a></li>
-                        <li><a href="#maintenance">🔧 维护指南</a></li>
-                    </ul>
-                </li>
+            <!-- 另一个带二级菜单的条目 -->
+            <li class="has-submenu">
+                <a href="#server">
+                    <span class="menu-text">🏰 ESS服务器文档</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="#setup">🛠️ 服务器搭建</a></li>
+                    <li><a href="#plugins">🔌 插件配置</a></li>
+                    <li><a href="#maintenance">🔧 维护指南</a></li>
+                </ul>
+            </li>
 
-                <li><a href="#faq">❓ 常见问题汇总</a></li>
+            <!-- 修正后的单级菜单 -->
+            <li><a href="#faq">❓ 常见问题汇总</a></li>
             </ul>
         </nav>
     </aside>
     
     <main class="container">
-        <div class="content-header">
-            <h1>欢迎来到NTの文档中心</h1>
-            <p class="description">这里还是一片空白捏，你可以点开侧边栏来阅读文章</p>
-        </div>
+    <div class="content-header">
+        <h1>欢迎来到NTの文档中心</h1>
+        <p class="description">这里还是一片空白捏，你可以点开侧边栏来阅读文章</p>
+    </div>
     </main>
-
+    
     <script>
-	// ======== 完全按照index(2).html的壁纸管理模块 ========
+        // ======== 壁纸管理模块 ========
         const deviceDetector = {
             isMobile: () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
                         || window.matchMedia("(max-width: 768px)").matches,
@@ -384,80 +470,135 @@
         const handleResize = () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
-                if (Date.now() - wallpaperManager.cache.lastUpdate > 300000) { // 5分钟间隔
+                if (Date.now() - wallpaperManager.cache.lastUpdate > 300000) {
                     wallpaperManager.setBackground();
                 }
             }, 1000);
         };
 
-        // ======== 初始化逻辑 ========
+        // ======== 初始化 ========
         window.addEventListener('DOMContentLoaded', () => {
-            // 壁纸初始化
             const cached = localStorage.getItem('lastWallpaper');
             if (cached) document.body.style.backgroundImage = `url("${cached}")`;
             
             wallpaperManager.setBackground();
-            setInterval(wallpaperManager.setBackground, 7200000); // 2小时刷新
-            
-            // 窗口调整监听
+            setInterval(wallpaperManager.setBackground, 7200000);
             window.addEventListener('resize', handleResize);
-
-            // 侧边栏初始化（保持原有逻辑）
-            initSidebar();
         });
-        // 侧边栏交互
+
+        // ======== 侧边栏交互 ========
         const menuToggle = document.querySelector('.menu-toggle');
         const sidebar = document.querySelector('.sidebar');
 
-        // 菜单开关
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            menuToggle.classList.toggle('active');
-        });
-
-        // 二级菜单交互
-        document.addEventListener('click', (e) => {
-            const isMobile = window.innerWidth <= 992;
-            const submenuParent = e.target.closest('.has-submenu');
-
-            // 处理菜单点击
-            if (submenuParent && isMobile) {
-                e.preventDefault();
-                document.querySelectorAll('.has-submenu').forEach(item => {
-                    if (item !== submenuParent) item.classList.remove('active');
-                });
-                submenuParent.classList.toggle('active');
-            }
-
-            // 点击外部关闭菜单
-            if (!e.target.closest('.sidebar') && isMobile) {
-                document.querySelectorAll('.has-submenu').forEach(item => {
-                    item.classList.remove('active');
-                });
+        document.body.addEventListener('click', e => {
+            if (e.target.closest('.menu-toggle')) {
+                const isActive = !sidebar.classList.contains('active');
+                sidebar.classList.toggle('active', isActive);
+                menuToggle.classList.toggle('active', isActive);
+                menuToggle.setAttribute('aria-expanded', isActive);
+            } else if (sidebar.classList.contains('active') && !sidebar.contains(e.target)) {
+                sidebar.classList.remove('active');
+                menuToggle.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
             }
         });
 
-        // 窗口大小变化处理
         window.addEventListener('resize', () => {
             if (window.innerWidth > 992) {
                 sidebar.classList.remove('active');
                 menuToggle.classList.remove('active');
-                document.querySelectorAll('.has-submenu').forEach(item => {
-                    item.classList.remove('active');
-                });
+                menuToggle.setAttribute('aria-expanded', 'false');
+            }
+        }, { passive: true });
+        
+        // ======== 搜索功能 ========
+        document.getElementById('searchInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim();
+                if (query) {
+                    alert(`执行搜索: ${query}`);
+                    e.target.value = '';
+                }
             }
         });
-	// 初始化
-        window.addEventListener('DOMContentLoaded', () => {
-            // 壁纸初始化
-            const cached = localStorage.getItem('lastWallpaper');
-            if (cached) document.body.style.backgroundImage = `url("${cached}")`;
-            wallpaperManager.setBackground();
-            setInterval(wallpaperManager.setBackground, 7200000);
+        // ========== 二级菜单交互逻辑 ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取所有带子菜单的项
+            const submenuItems = document.querySelectorAll('.has-submenu');
 
-            // 侧边栏初始化
-            initSidebar();
+            // 处理菜单点击
+            submenuItems.forEach(item => {
+                const link = item.querySelector('a');
+                
+                link.addEventListener('click', (e) => {
+                    // 移动端专属处理
+                    if (window.innerWidth <= 992) {
+                        e.preventDefault();
+                        item.classList.toggle('active');
+                        
+                        // 关闭其他展开的菜单
+                        submenuItems.forEach(otherItem => {
+                            if (otherItem !== item) {
+                                otherItem.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            });
+
+            // 点击外部关闭菜单（移动端）
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.has-submenu') && window.innerWidth <= 992) {
+                    submenuItems.forEach(item => {
+                        item.classList.remove('active');
+                    });
+                }
+            });
+
+            // 窗口大小变化重置状态
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 992) {
+                    submenuItems.forEach(item => {
+                        item.classList.remove('active');
+                    });
+                }
+            });
         });
+        
+        // ========== 二级菜单交互优化 ==========
+document.addEventListener('DOMContentLoaded', () => {
+    const submenuParents = document.querySelectorAll('.has-submenu');
+    
+    submenuParents.forEach(parent => {
+        const link = parent.querySelector('a');
+        
+        link.addEventListener('click', function(e) {
+            if (window.innerWidth > 992) return;
+            
+            e.preventDefault();
+            const wasActive = parent.classList.contains('active');
+            
+            // 关闭其他菜单
+            submenuParents.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 切换当前状态
+            if (!wasActive) {
+                parent.classList.add('active');
+            }
+        });
+    });
+
+    // 点击外部关闭
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.has-submenu') && window.innerWidth <= 992) {
+            submenuParents.forEach(item => {
+                item.classList.remove('active');
+            });
+        }
+    });
+});
     </script>
 </body>
 </html>
