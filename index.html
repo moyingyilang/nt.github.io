@@ -295,6 +295,27 @@
     .night-mode .sidebar-nav a:hover {
         background: rgba(255, 255, 255, 0.1);
     }
+    
+    /* 侧边栏夜间模式 */
+        .night-mode .sidebar {
+            background: var(--night-layer-1);
+            border-right-color: var(--night-border);
+        }
+        .night-mode .sidebar-header {
+            color: var(--accent-blue);
+        }
+        .night-mode .sidebar-nav a {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .night-mode .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .night-mode .submenu {
+            background: var(--night-layer-2);
+        }
+        .night-mode .has-submenu > a::after {
+            filter: invert(0.8);
+        }
 
     /* 切换按钮样式 */
     .theme-toggle {
@@ -529,6 +550,35 @@
             document.body.classList.add('night-mode');
         }
     });
+    // 新增主题控制模块
+        const themeManager = {
+            init() {
+                this.toggleBtn = document.querySelector('.theme-toggle');
+                this.loadTheme();
+                this.bindEvents();
+            },
+            
+            loadTheme() {
+                const savedTheme = localStorage.getItem('theme') || 
+                                  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'light');
+                if (savedTheme === 'night') document.body.classList.add('night-mode');
+            },
+            
+            bindEvents() {
+                this.toggleBtn.addEventListener('click', () => {
+                    document.body.classList.toggle('night-mode');
+                    const currentTheme = document.body.classList.contains('night-mode') ? 'night' : 'light';
+                    localStorage.setItem('theme', currentTheme);
+                    
+                    // 同步更新菜单状态
+                    document.querySelectorAll('.has-submenu.active').forEach(item => {
+                        item.style.backgroundColor = currentTheme === 'night' 
+                            ? 'rgba(255,255,255,0.05)' 
+                            : '';
+                    });
+                });
+            }
+        };
     </script>
 </body>
 </html>
