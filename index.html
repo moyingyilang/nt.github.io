@@ -465,6 +465,28 @@
     .night-mode .markdown-content a {
         color: var(--accent-blue);
     }
+    
+    /* 新增内容切换动画 */
+    .content-header {
+        transition: opacity 0.3s ease;
+    }
+    .content-header.hidden {
+        opacity: 0;
+        pointer-events: none;
+        height: 0;
+        overflow: hidden;
+        margin: 0;
+    }
+
+    .markdown-content {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s ease;
+    }
+    .markdown-content.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
         
     </style>
 </head>
@@ -491,7 +513,7 @@
         <nav aria-label="文档目录">
             <ul class="sidebar-nav">
                 <li class="has-submenu">
-                    <a href="#nt-fps">🎮 提升FPS材质包</a>
+                    <a href="#">🎮 提升FPS材质包</a>
                     <ul class="submenu">
                         <li><a href="#install">📥 官网下载</a></li>
                         <li><a href="#config">⚙️ 导入教程</a></li>
@@ -500,7 +522,7 @@
                 </li>
 
                 <li class="has-submenu">
-                    <a href="#server">🏰 ESS服务器文档</a>
+                    <a href="#">🏰 ESS服务器文档</a>
                     <ul class="submenu">
                         <li><a href="#setup">🛠️ 服务器搭建</a></li>
                         <li><a href="#plugins">🔌 插件配置</a></li>
@@ -765,7 +787,16 @@
         return {
             // 加载并渲染Markdown
             async load(path) {
-                if (currentPath === path) return;
+                const header = document.querySelector('.content-header');
+                const content = document.getElementById('content');
+
+                // 隐藏欢迎信息
+                header.classList.add('hidden');
+            
+                // 显示加载动画
+                content.innerHTML = '<div class="loading-spinner">🌀</div>';
+                content.classList.remove('active');
+                    if (currentPath === path) return;
             
                 const container = document.getElementById('content');
                 container.classList.add('loading');
@@ -784,6 +815,10 @@
                 
                     container.innerHTML = marked.parse(content);
                     this.updateActiveLink(path);
+                    
+                    content.innerHTML = marked.parse(contentText);
+                    content.classList.add('active');
+                    
                 } catch (error) {
                     container.innerHTML = `<div class="error">📄 文档加载失败: ${error.message}</div>`;
                 } finally {
@@ -865,6 +900,20 @@
         
             // 添加视觉反馈
             this.playHomeAnimation();
+            
+            const header = document.querySelector('.content-header');
+            const content = document.getElementById('content');
+        
+            // 显示欢迎信息
+            header.classList.remove('hidden');
+        
+            // 隐藏文章内容
+            content.classList.remove('active');
+            content.innerHTML = '';
+        
+            // 添加重置动画
+            header.style.animation = 'fadeInUp 0.6s ease';
+            
         },
 
         // 主页动画效果
