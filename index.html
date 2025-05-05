@@ -335,7 +335,7 @@
         
         /* 调整按钮样式 */
     .theme-toggle {
-        background: rgba(0,0,0,0.1);
+        background: rgba(0,0,0,0);
         border: none;
         border-radius: 50%;
         width: 40px;
@@ -348,7 +348,7 @@
     }
 
     .theme-toggle:hover {
-        background: rgba(0,0,0,0.2);
+        background: rgba(0,0,0,0);
         transform: scale(1.1) rotate(15deg);
     }
 
@@ -362,7 +362,6 @@
     @media (max-width: 992px) {
         .sidebar-footer {
             padding: 0.8rem;
-            backdrop-filter: blur(5px);
         }
         .theme-toggle {
             width: 36px;
@@ -387,9 +386,23 @@
         bottom: 0;
     }
     
-    .theme-toggle:focus {
-        outline: 2px solid var(--accent-blue);
-        outline-offset: 2px;
+    /* 修正后的CSS */
+    .theme-toggle .night-icon {
+        display: none;
+    }
+
+    /* 夜间模式状态 */
+    body.night-mode .theme-toggle .day-icon {
+        display: none;
+    }
+    body.night-mode .theme-toggle .night-icon {
+        display: block;
+    }
+
+    /* 增强选择器特异性 */
+    .theme-toggle > span {
+        display: inline-block;
+        transition: opacity 0.3s;
     }
         
     </style>
@@ -439,8 +452,8 @@
         </nav>
         <div class="sidebar-footer">
         <button class="theme-toggle" aria-label="切换主题" title="日间/夜间模式">
-            <span class="day-icon">🌞</span>
-            <span class="night-icon">🌙</span>
+            <span class="day-icon">🇰🇵</span>
+            <span class="night-icon">🇰🇷</span>
         </button>
         </div>
     </aside>
@@ -578,56 +591,56 @@
             initSidebar();
         });
         // 新增主题切换功能
-const themeToggle = document.querySelector('.sidebar-footer .theme-toggle');
-    // 初始化主题状态
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'night') document.body.classList.add('night-mode');
+        const themeToggle = document.querySelector('.sidebar-footer .theme-toggle');
+        // 初始化主题状态
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'night') document.body.classList.add('night-mode');
 
-    // 切换主题
-    themeToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        document.body.classList.toggle('night-mode');
-        localStorage.setItem('theme', 
+        // 切换主题
+        themeToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.body.classList.toggle('night-mode');
+            localStorage.setItem('theme', 
             document.body.classList.contains('night-mode') ? 'night' : 'light'
-        );
-    });
+            );
+        });
     
-    // 新增悬停提示效果
-    let hoverTimer;
-    themeToggle.addEventListener('mouseenter', () => {
-        hoverTimer = setTimeout(() => {
-            themeToggle.setAttribute('data-tooltip', 
+        // 新增悬停提示效果
+        let hoverTimer;
+        themeToggle.addEventListener('mouseenter', () => {
+            hoverTimer = setTimeout(() => {
+                themeToggle.setAttribute('data-tooltip', 
                 document.body.classList.contains('night-mode') 
                 ? '切换日间模式' 
                 : '切换夜间模式'
-            );
-        }, 300);
-    });
+                );
+            }, 300);
+        });
     
-    themeToggle.addEventListener('mouseleave', () => {
-        clearTimeout(hoverTimer);
-        themeToggle.removeAttribute('data-tooltip');
-    });
+        themeToggle.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimer);
+            themeToggle.removeAttribute('data-tooltip');
+        });
 
-    // 移动端触摸反馈
-    themeToggle.addEventListener('touchstart', () => {
-        themeToggle.style.transform = 'scale(0.9)';
-    });
+        // 移动端触摸反馈
+        themeToggle.addEventListener('touchstart', () => {
+            themeToggle.style.transform = 'scale(0.9)';
+        });
     
-    themeToggle.addEventListener('touchend', () => {
-        themeToggle.style.transform = '';
-    });
+        themeToggle.addEventListener('touchend', () => {
+            themeToggle.style.transform = '';
+        });
 
-    // 在DOMContentLoaded事件中初始化
-    window.addEventListener('DOMContentLoaded', () => {
+        // 在DOMContentLoaded事件中初始化
+        window.addEventListener('DOMContentLoaded', () => {
         // 原有初始化代码...
         
         // 添加主题初始化
-        if (localStorage.getItem('theme') === 'night') {
-            document.body.classList.add('night-mode');
-        }
-    });
-    // 新增主题控制模块
+            if (localStorage.getItem('theme') === 'night') {
+                document.body.classList.add('night-mode');
+            }
+        });
+        // 新增主题控制模块
         const themeManager = {
             init() {
                 this.toggleBtn = document.querySelector('.theme-toggle');
@@ -661,7 +674,6 @@ const themeToggle = document.querySelector('.sidebar-footer .theme-toggle');
             const isNight = document.body.classList.contains('night-mode');
             themeToggle.title = isNight ? '切换日间模式' : '切换夜间模式';
         });
-        
     </script>
 </body>
 </html>
