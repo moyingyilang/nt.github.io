@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
     <title>NTの文档小站</title>
     <style>
         :root {
@@ -404,6 +407,64 @@
         display: inline-block;
         transition: opacity 0.3s;
     }
+    
+    /* Markdown内容样式 */
+    .markdown-content {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .markdown-content h2 {
+        color: var(--primary-blue);
+        border-bottom: 2px solid #eee;
+        padding-bottom: 0.5rem;
+        margin: 2rem 0 1rem;
+    }
+
+    .markdown-content pre {
+        background: rgba(0,0,0,0.05);
+        border-radius: 8px;
+        padding: 1rem;
+        overflow-x: auto;
+    }
+
+    .night-mode .markdown-content pre {
+        background: rgba(255,255,255,0.1);
+    }
+
+    /* 加载动画 */
+    .loading-spinner {
+        animation: rotate 1s linear infinite;
+        width: 24px;
+        height: 24px;
+        margin: 2rem auto;
+        display: none;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .loading .loading-spinner {
+        display: block;
+    }
+    
+    /* 响应式表格 */
+    .markdown-content table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    /* 深色模式适配 */
+    .night-mode .markdown-content {
+        color: rgba(255,255,255,0.85);
+    }
+
+    .night-mode .markdown-content a {
+        color: var(--accent-blue);
+    }
         
     </style>
 </head>
@@ -416,7 +477,7 @@
                 <span></span>
                 <span></span>
             </button>
-            <a href="#" class="logo">NTの文档</a>
+            <a href="#" class="logo" id="homeLink">NTの文档</a>
             <div class="nav-links">
                 <a href="#re-release">NTの提升FPS材质包</a>
                 <a href="#docs">随写文档</a>
@@ -474,6 +535,7 @@
             <h1>欢迎来到NTの文档中心</h1>
             <p class="description">这里还是一片空白捏，你可以点开侧边栏来阅读文章</p>
         </div>
+        <div id="content" class="markdown-content"></div>
     </main>
 
     <script>
@@ -685,6 +747,159 @@
             const isNight = document.body.classList.contains('night-mode');
             themeToggle.title = isNight ? '切换日间模式' : '切换夜间模式';
         });
+        // Markdown加载器模块
+        const mdLoader = (() => {
+        const cache = new Map();
+        let currentPath = '';
+    
+        // 初始化配置
+        marked.setOptions({
+            highlight: (code, lang) => {
+                const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
+                return hljs.highlight(code, { language: validLang }).value;
+            },
+            breaks: true,
+            gfm: true
+        });
+
+        return {
+            // 加载并渲染Markdown
+            async load(path) {
+                if (currentPath === path) return;
+            
+                const container = document.getElementById('content');
+                container.classList.add('loading');
+                currentPath = path;
+
+                try {
+                    let content;
+                    if (cache.has(path)) {
+                        content = cache.get(path);
+                    } else {
+                        const response = await fetch(`docs/${path}.md`);
+                        if (!response.ok) throw new Error('文档不存在');
+                        content = await response.text();
+                        cache.set(path, content);
+                    }
+                
+                    container.innerHTML = marked.parse(content);
+                    this.updateActiveLink(path);
+                } catch (error) {
+                    container.innerHTML = `<div class="error">📄 文档加载失败: ${error.message}</div>`;
+                } finally {
+                    container.classList.remove('loading');
+                    currentPath = '';
+                }
+            },
+
+            // 更新活动菜单项
+            updateActiveLink(path) {
+                document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === `#${path}`);
+                });
+            }
+        };
+    })();
+
+    // 初始化事件监听
+    document.querySelectorAll('.sidebar-nav a').forEach(link => {
+        link.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const path = e.target.getAttribute('href').slice(1);
+            history.pushState(null, '', `#${path}`);
+            await mdLoader.load(path);
+        });
+    });
+
+    // 处理浏览器前进/后退
+    window.addEventListener('popstate', () => {
+        const path = location.hash.slice(1);
+        if (path) mdLoader.load(path);
+    });
+
+    // 初始加载
+    window.addEventListener('DOMContentLoaded', () => {
+        if (location.hash) {
+            mdLoader.load(location.hash.slice(1));
+        }
+    });
+    
+        // 主页控制模块
+    const homeManager = {
+        init() {
+            const homeLink = document.getElementById('homeLink');
+        
+            // 点击Logo事件
+            homeLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.resetToHome();
+            });
+
+            // 监听主页状态
+            window.addEventListener('popstate', (e) => {
+                if (!location.hash) this.showHome();
+            });
+        },
+
+        // 重置到主页状态
+        resetToHome() {
+            // 清空内容区域
+            document.getElementById('content').innerHTML = '';
+        
+            // 显示默认欢迎信息
+            document.querySelector('.content-header').style.display = 'block';
+        
+            // 重置URL（不触发刷新）
+            history.pushState(null, '', window.location.pathname);
+        
+            // 关闭侧边栏（移动端）
+            if (window.innerWidth <= 992) {
+                document.querySelector('.sidebar').classList.remove('active');
+                document.querySelector('.menu-toggle').classList.remove('active');
+            }
+        
+            // 清除菜单激活状态
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+        
+            // 添加视觉反馈
+            this.playHomeAnimation();
+        },
+
+        // 主页动画效果
+        playHomeAnimation() {
+            const header = document.querySelector('.content-header');
+            header.style.animation = 'none';
+            void header.offsetWidth; // 触发重绘
+            header.style.animation = 'fadeInUp 0.6s ease';
+        }
+    };
+
+    // 在初始化时启动
+    window.addEventListener('DOMContentLoaded', () => {
+        homeManager.init();
+    });
+
+    // 添加CSS动画
+    const style = document.createElement('style');
+    style.textContent = `
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .content-header {
+    animation: fadeInUp 0.6s ease forwards;
+    }
+    `;
+    document.head.appendChild(style);
+    
     </script>
 </body>
 </html>
