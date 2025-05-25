@@ -1,17 +1,18 @@
 <!-- trends.html -->
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>NT项目趋势追踪</title>
   <style>
     /* 复用您现有的卡片样式 */
     .stats-card {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
       border-radius: 12px;
       padding: 20px;
       margin: 15px 0;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     /* 新增时间轴样式 */
@@ -34,6 +35,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- 复用您现有的导航结构 -->
   <nav class="nav-bar">
@@ -71,13 +73,13 @@
         // 获取原始提交数据
         const response = await fetch(`${this.repoUrl}/commits?per_page=100`)
         const commits = await response.json()
-        
+
         // 处理成趋势数据格式
         const trendData = commits.map(commit => ({
           date: new Date(commit.commit.author.date).toISOString().split('T')[0],
           message: commit.commit.message,
-          author: commit.author?.login || 'Unknown'
-        }))
+          author: commit.author ? login || 'Unknown'
+      }))
 
         // 缓存24小时
         localStorage.setItem(this.cacheKey, JSON.stringify({
@@ -112,4 +114,5 @@
     })
   </script>
 </body>
+
 </html>
