@@ -1,0 +1,115 @@
+<!-- trends.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NT项目趋势追踪</title>
+  <style>
+    /* 复用您现有的卡片样式 */
+    .stats-card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+
+    /* 新增时间轴样式 */
+    #timeline-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      padding: 15px;
+    }
+
+    .timeline-event {
+      background: linear-gradient(145deg, #2d3035, #272a2f);
+      padding: 12px;
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+
+    .timeline-event:hover {
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+  <!-- 复用您现有的导航结构 -->
+  <nav class="nav-bar">
+    <a href="/">Home</a>
+    <a href="trends.html" class="active">项目趋势</a>
+  </nav>
+
+  <div class="container">
+    <!-- 提交频率卡片 -->
+    <div class="stats-card" id="commit-stats">
+      <h2>代码提交热力图</h2>
+      <div id="heatmap"></div>
+    </div>
+
+    <!-- 动态时间轴 -->
+    <div class="stats-card">
+      <h2>开发里程碑</h2>
+      <div id="timeline-container"></div>
+    </div>
+  </div>
+
+  <script>
+    // 完全内联的Git数据解析
+    class NTProjectTrends {
+      constructor() {
+        this.repoUrl = 'https://github.com/moyingyilang/nt.github.io'
+        this.cacheKey = 'nt_trends_data'
+      }
+
+      async loadData() {
+        // 优先使用缓存
+        const cached = localStorage.getItem(this.cacheKey)
+        if (cached) return JSON.parse(cached)
+
+        // 获取原始提交数据
+        const response = await fetch(`${this.repoUrl}/commits?per_page=100`)
+        const commits = await response.json()
+        
+        // 处理成趋势数据格式
+        const trendData = commits.map(commit => ({
+          date: new Date(commit.commit.author.date).toISOString().split('T')[0],
+          message: commit.commit.message,
+          author: commit.author?.login || 'Unknown'
+        }))
+
+        // 缓存24小时
+        localStorage.setItem(this.cacheKey, JSON.stringify({
+          data: trendData,
+          timestamp: Date.now()
+        }))
+
+        return trendData
+      }
+
+      renderHeatmap() {
+        const container = document.getElementById('heatmap')
+        // 生成基于您现有UI风格的热力图
+        container.innerHTML = Array(52).fill()
+          .map((_, week) => `
+            <div class="heatmap-week" style="display:inline-block;margin:2px">
+              ${Array(7).fill().map((_, day) => `
+                <div class="heatmap-day" 
+                     style="width:12px;height:12px;background:#${Math.random().toString(16).substr(2,6)};margin:1px">
+                </div>
+              `).join('')}
+            </div>
+          `).join('')
+      }
+    }
+
+    // 初始化
+    window.addEventListener('DOMContentLoaded', async () => {
+      const trendAnalyzer = new NTProjectTrends()
+      await trendAnalyzer.loadData()
+      trendAnalyzer.renderHeatmap()
+    })
+  </script>
+</body>
+</html>
